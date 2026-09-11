@@ -12,6 +12,7 @@
     "dev:storefront": "npm --prefix apps/storefront run dev",
     "dev:admin": "npm --prefix apps/admin run dev",
     "build": "npm run build --workspace=@tea-nest/admin && npm run build --workspace=@tea-nest/storefront",
+    "build:netlify": "node scripts/buildNetlify.cjs",
     "typecheck": "tsc --project packages/shared/tsconfig.json --noEmit && tsc --project packages/validation/tsconfig.json --noEmit && tsc --project apps/storefront/tsconfig.json --noEmit && tsc --project apps/admin/tsconfig.json --noEmit",
     "test": "vitest run",
     "lint": "eslint .",
