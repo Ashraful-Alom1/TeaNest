@@ -1,0 +1,30 @@
+node_modules/
+dist/
+build/
+.cache/
+*.log
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+
+.env
+.env.local
+.env.*.local
+*.pem
+serviceAccountKey.json
+service-account*.json
+*.key
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Testing
+coverage/
+playwright-report/
+test-results/

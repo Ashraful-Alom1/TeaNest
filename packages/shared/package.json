@@ -1,0 +1,13 @@
+{
+  "name": "@tea-nest/shared",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@tea-nest/types": "*",
+    "clsx": "^2.1.1",
+    "firebase": "^11.0.2",
+    "tailwind-merge": "^3.6.0"
+  }
+}

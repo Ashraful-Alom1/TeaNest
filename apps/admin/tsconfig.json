@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@tea-nest/types": ["../../packages/types/src/index.ts"],
+      "@tea-nest/types/*": ["../../packages/types/src/*"],
+      "@tea-nest/shared": ["../../packages/shared/src/index.ts"],
+      "@tea-nest/shared/*": ["../../packages/shared/src/*"],
+      "@tea-nest/validation": ["../../packages/validation/src/index.ts"],
+      "@tea-nest/validation/*": ["../../packages/validation/src/*"]
+    }
+  },
+  "include": ["src"]
+}

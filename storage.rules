@@ -1,0 +1,39 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'ramdhenudigisolution@gmail.com' ||
+        request.auth.token.email == 'admin@teanest.in' ||
+        request.auth.token.email == 'fortunateventures123@gmail.com'
+      );
+    }
+
+    // Public product images, packaging photos, and logos: Anyone can view, Admin can upload
+    match /products/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /branding/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Invoices & Private documents: Customer can download their own invoice, Admin full access
+    match /invoices/{userId}/{fileName} {
+      allow read: if isAdmin() || (isAuthenticated() && request.auth.uid == userId);
+      allow write: if isAdmin();
+    }
+
+    // Default fallback: Admin full access
+    match /{allPaths=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

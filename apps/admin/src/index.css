@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Scrollbar for SaaS Tables and Sidebars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f1311;
+}
+::-webkit-scrollbar-thumb {
+  background: #26332d;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c5a059;
+}

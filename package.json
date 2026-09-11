@@ -1,0 +1,40 @@
+{
+  "name": "tea-nest-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "predev": "node scripts/killPorts.js",
+    "dev": "node scripts/startDev.js",
+    "dev:storefront": "npm --prefix apps/storefront run dev",
+    "dev:admin": "npm --prefix apps/admin run dev",
+    "build": "npm run build --workspace=@tea-nest/admin && npm run build --workspace=@tea-nest/storefront",
+    "typecheck": "tsc --project packages/shared/tsconfig.json --noEmit && tsc --project packages/validation/tsconfig.json --noEmit && tsc --project apps/storefront/tsconfig.json --noEmit && tsc --project apps/admin/tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "seed": "npx tsx scripts/seed.ts",
+    "sync:server": "npx tsx watch scripts/syncServer.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.70.0",
+    "@typescript-eslint/parser": "^8.70.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^10.0.5",
+    "eslint": "^10.10.0",
+    "globals": "^17.12.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.4.3",
+    "vitest": "^2.1.8"
+  },
+  "overrides": {
+    "vite": "^6.4.3"
+  },
+  "dependencies": {
+    "firebase": "^12.19.0"
+  }
+}

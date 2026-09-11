@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Custom gold shimmer gradient text */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #dfc07b 0%, #c5a059 50%, #ebd6a4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Dark rich background with subtle radial glow */
+.bg-tea-dark {
+  background: radial-gradient(circle at 50% 20%, #1a231d 0%, #101412 70%, #0a0d0b 100%);
+}
+
+/* Glassmorphism for dark panels */
+.glass-panel-dark {
+  background: rgba(18, 22, 19, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(197, 160, 89, 0.15);
+}
+
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(197, 160, 89, 0.2);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #111412;
+}
+::-webkit-scrollbar-thumb {
+  background: #2e6342;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c5a059;
+}

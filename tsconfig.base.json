@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@tea-nest/types": ["./packages/types/src/index.ts"],
+      "@tea-nest/types/*": ["./packages/types/src/*"],
+      "@tea-nest/shared": ["./packages/shared/src/index.ts"],
+      "@tea-nest/shared/*": ["./packages/shared/src/*"],
+      "@tea-nest/validation": ["./packages/validation/src/index.ts"],
+      "@tea-nest/validation/*": ["./packages/validation/src/*"]
+    }
+  }
+}

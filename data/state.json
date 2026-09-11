@@ -1,0 +1,1585 @@
+{
+  "products": [
+    {
+      "id": "prod_tea_assam_500g",
+      "name": "Assam Black Tea",
+      "slug": "assam-black-tea",
+      "description": "Rich • Refreshing • Aromatic. Carefully handpicked from the finest tea gardens of Dibrugarh, our teas are crafted to bring you a pure, refreshing and enriching experience in every cup.",
+      "sku": "TN-ABT-500G",
+      "categoryId": "black-tea",
+      "categoryName": "Assam Black Tea",
+      "weight": 500,
+      "unit": "g",
+      "mrp": 499,
+      "sellingPrice": 450,
+      "purchasePrice": 220,
+      "gstRate": 5,
+      "hsnCode": "0902",
+      "stockQuantity": 16,
+      "stockReferenceQty": 100,
+      "lowStockPercent": 70,
+      "lowStockThresholdQty": 70,
+      "images": [
+        {
+          "cloudinaryPublicId": "front",
+          "secureUrl": "/images/tea_nest_front.jpg",
+          "width": 800,
+          "height": 1200,
+          "altText": "Assam Black Tea Front Packaging",
+          "sortOrder": 1
+        },
+        {
+          "cloudinaryPublicId": "back",
+          "secureUrl": "/images/tea_nest_back.jpg",
+          "width": 800,
+          "height": 1200,
+          "altText": "Assam Black Tea Back Packaging",
+          "sortOrder": 2
+        }
+      ],
+      "thumbnail": {
+        "cloudinaryPublicId": "front",
+        "secureUrl": "/images/tea_nest_front.jpg",
+        "width": 800,
+        "height": 1200,
+        "altText": "Assam Black Tea Thumbnail",
+        "sortOrder": 1
+      },
+      "isPublished": true,
+      "isFeatured": true,
+      "isActive": true,
+      "createdAt": "2026-09-10T20:36:58.772Z",
+      "updatedAt": "2026-09-11T19:09:21.207Z",
+      "createdBy": "admin@teanest.in"
+    }
+  ],
+  "orders": [
+    {
+      "customerId": "cust_1789072896281",
+      "customerName": "Biraj Saikia",
+      "customerMobile": "9864112233",
+      "customerEmail": "biraj@teanest.in",
+      "shippingAddress": {
+        "fullName": "Biraj Saikia",
+        "mobile": "9864112233",
+        "street": "Naharkatia Estate Delivery Point",
+        "city": "Dibrugarh",
+        "state": "Assam",
+        "pincode": "786610"
+      },
+      "items": [
+        {
+          "productId": "prod_tea_assam_500g",
+          "sku": "TN-ABT-500G",
+          "name": "Assam Black Tea",
+          "weight": 500,
+          "unit": "g",
+          "price": 450,
+          "purchasePrice": 220,
+          "quantity": 1,
+          "gstRate": 5,
+          "taxableAmount": 428.57,
+          "tax": 21.43,
+          "subtotal": 428.57,
+          "total": 450,
+          "image": "/images/tea_nest_front.jpg"
+        }
+      ],
+      "subtotal": 428.57,
+      "discount": 0,
+      "taxableAmount": 428.57,
+      "tax": 21.43,
+      "cgst": 10.72,
+      "sgst": 10.71,
+      "igst": 0,
+      "shipping": 0,
+      "grandTotal": 450,
+      "status": "CONFIRMED",
+      "paymentStatus": "UNPAID",
+      "paymentMethod": "WHATSAPP",
+      "whatsappMessageSent": true,
+      "isWhatsAppOrder": true,
+      "notes": "",
+      "id": "order_1789072917724_4vkqz",
+      "orderNumber": "TN-2026-000001",
+      "createdAt": "2026-09-10T20:41:57.724Z",
+      "updatedAt": "2026-09-11T19:11:56.120Z",
+      "invoiceId": "inv_1789073018665",
+      "saleId": "sale_1789073018664",
+      "confirmedAt": "2026-09-10T20:43:38.664Z"
+    },
+    {
+      "customerId": "cust_1789138082173",
+      "customerName": "Ashraful Alom",
+      "customerMobile": "6901320430",
+      "customerEmail": "ashrafulalom12042002@gmail.com",
+      "shippingAddress": {
+        "fullName": "Ashraful Alom",
+        "mobile": "6901320430",
+        "street": "Naharkatia Estate Delivery Point",
+        "city": "Dibrugarh",
+        "state": "Assam",
+        "pincode": "786610"
+      },
+      "items": [
+        {
+          "productId": "prod_tea_assam_500g",
+          "sku": "TN-ABT-500G",
+          "name": "Assam Black Tea",
+          "weight": 500,
+          "unit": "g",
+          "price": 450,
+          "purchasePrice": 220,
+          "quantity": 1,
+          "gstRate": 5,
+          "taxableAmount": 428.57,
+          "tax": 21.43,
+          "subtotal": 428.57,
+          "total": 450,
+          "image": "/images/tea_nest_front.jpg"
+        }
+      ],
+      "subtotal": 428.57,
+      "discount": 0,
+      "taxableAmount": 428.57,
+      "tax": 21.43,
+      "cgst": 10.72,
+      "sgst": 10.71,
+      "igst": 0,
+      "shipping": 0,
+      "grandTotal": 450,
+      "status": "CONFIRMED",
+      "paymentStatus": "UNPAID",
+      "paymentMethod": "WHATSAPP",
+      "whatsappMessageSent": true,
+      "isWhatsAppOrder": true,
+      "notes": "",
+      "id": "order_1789138221109_porkl",
+      "orderNumber": "TN-2026-000002",
+      "createdAt": "2026-09-11T14:50:21.109Z",
+      "updatedAt": "2026-09-11T19:34:07.296Z",
+      "invoiceId": "inv_1789153761208",
+      "saleId": "sale_1789153761207",
+      "confirmedAt": "2026-09-11T19:09:21.207Z"
+    },
+    {
+      "customerId": "cust_1789138082173",
+      "customerName": "Ashraful Alom",
+      "customerMobile": "6901320430",
+      "customerEmail": "ashrafulalom12042002@gmail.com",
+      "shippingAddress": {
+        "fullName": "Ashraful Alom",
+        "mobile": "6901320430",
+        "street": "Naharkatia Estate Delivery Point",
+        "city": "Dibrugarh",
+        "state": "Assam",
+        "pincode": "786610"
+      },
+      "items": [
+        {
+          "productId": "prod_tea_assam_500g",
+          "sku": "TN-ABT-500G",
+          "name": "Assam Black Tea",
+          "weight": 500,
+          "unit": "g",
+          "price": 450,
+          "purchasePrice": 220,
+          "quantity": 1,
+          "gstRate": 5,
+          "taxableAmount": 428.57,
+          "tax": 21.43,
+          "subtotal": 428.57,
+          "total": 450,
+          "image": "/images/tea_nest_front.jpg"
+        }
+      ],
+      "subtotal": 428.57,
+      "discount": 0,
+      "taxableAmount": 428.57,
+      "tax": 21.43,
+      "cgst": 10.72,
+      "sgst": 10.71,
+      "igst": 0,
+      "shipping": 0,
+      "grandTotal": 450,
+      "status": "PROCESSING",
+      "paymentStatus": "UNPAID",
+      "paymentMethod": "WHATSAPP",
+      "whatsappMessageSent": true,
+      "isWhatsAppOrder": true,
+      "notes": "",
+      "id": "order_1789138236463_nmya7",
+      "orderNumber": "TN-2026-000003",
+      "createdAt": "2026-09-11T14:50:36.463Z",
+      "updatedAt": "2026-09-11T19:08:55.544Z",
+      "invoiceId": "inv_1789139175789",
+      "saleId": "sale_1789139175789",
+      "confirmedAt": "2026-09-11T15:06:15.789Z"
+    }
+  ],
+  "sales": [
+    {
+      "saleId": "sale_1789153761207",
+      "saleNumber": "SL-2026-000001",
+      "orderId": "order_1789138221109_porkl",
+      "orderNumber": "TN-2026-000002",
+      "customerId": "cust_1789138082173",
+      "customerName": "Ashraful Alom",
+      "items": [
+        {
+          "productId": "prod_tea_assam_500g",
+          "sku": "TN-ABT-500G",
+          "name": "Assam Black Tea",
+          "weight": 500,
+          "unit": "g",
+          "price": 450,
+          "purchasePrice": 220,
+          "quantity": 1,
+          "gstRate": 5,
+          "taxableAmount": 428.57,
+          "tax": 21.43,
+          "subtotal": 428.57,
+          "total": 450,
+          "image": "/images/tea_nest_front.jpg"
+        }
+      ],
+      "subtotal": 428.57,
+      "discount": 0,
+      "taxableAmount": 428.57,
+      "gst": 21.43,
+      "cgst": 10.72,
+      "sgst": 10.71,
+      "igst": 0,
+      "shipping": 0,
+      "grandTotal": 450,
+      "costOfGoods": 220,
+      "profit": 208.57,
+      "saleDate": "2026-09-11",
+      "createdAt": "2026-09-11T19:09:21.207Z",
+      "paymentStatus": "UNPAID"
+    }
+  ],
+  "invoices": [
+    {
+      "invoiceId": "inv_1789073018665",
+      "invoiceNumber": "INV-2026-000001",
+      "orderId": "order_1789072917724_4vkqz",
+      "orderNumber": "TN-2026-000001",
+      "saleId": "sale_1789073018664",
+      "invoiceDate": "2026-09-10",
+      "dueDate": "2026-09-10",
+      "businessDetails": {
+        "businessName": "Fortunate Ventures",
+        "brandName": "Tea Nest",
+        "gstin": "18AABCF1234F1Z5",
+        "pan": "AABCF1234F",
+        "address": "Naharkatia, Dist- Dibrugarh",
+        "city": "Dibrugarh",
+        "state": "Assam",
+        "pincode": "786610",
+        "phone": "+91 98765 43210",
+        "email": "fortunateventures123@gmail.com"
+      },
+      "customerDetails": {
+        "customerId": "cust_1789072896281",
+        "name": "Biraj Saikia",
+        "email": "biraj@teanest.in",
+        "mobile": "9864112233",
+        "address": "Naharkatia Estate Delivery Point",
+        "city": "Dibrugarh",
+        "state": "Assam",
+        "pincode": "786610"
+      },
+      "items": [
+        {
+          "productId": "prod_tea_assam_500g",
+          "productName": "Assam Black Tea",
+          "sku": "TN-ABT-500G",
+          "hsnCode": "0902",
+          "weight": 500,
+          "unit": "g",
+          "quantity": 1,
+          "unitPrice": 450,
+          "taxableValue": 428.57,
+          "gstRate": 5,
+          "cgst": 10.72,
+          "sgst": 10.71,
+          "igst": 0,
+          "total": 450
+        }
+      ],
+      "subtotal": 428.57,
+      "taxableAmount": 428.57,
+      "gstRate": 5,
+      "cgst": 10.72,
+      "sgst": 10.71,
+      "igst": 0,
+      "shipping": 0,
+      "grandTotal": 450,
+      "amountInWords": "Four Hundred Fifty Rupees Only",
+      "termsAndConditions": "1. Goods once sold will not be taken back unless defective.\n2. Subject to Dibrugarh, Assam jurisdiction.\n3. Keep tea pouches sealed in a cool, dry place away from moisture and strong odors.",
+      "bankDetails": {
+        "bankName": "State Bank of India",
+        "accountNumber": "38291048291",
+        "ifsc": "SBIN0001234",
+        "upi": "fortunateventures@sbi"
+      },
+      "status": "CANCELLED",
+      "paymentStatus": "UNPAID",
+      "createdAt": "2026-09-10T20:43:38.664Z"
+    },
+    {
+      "invoiceId": "inv_1789139175789",
+      "invoiceNumber": "INV-2026-000002",
+      "orderId": "order_1789138236463_nmya7",
+      "orderNumber": "TN-2026-000003",
+      "saleId": "sale_1789139175789",
+      "invoiceDate": "2026-09-11",
+      "dueDate": "2026-09-11",
+      "businessDetails": {
+        "businessName": "Fortunate Ventures",
+        "brandName": "Tea Nest",
+        "gstin": "18AABCF1234F1Z5",
+        "pan": "AABCF1234F",
+        "address": "Naharkatia, Dist- Dibrugarh",
+        "city": "Dibrugarh",
+        "state": "Assam",
+        "pincode": "786610",
+        "phone": "+91 98765 43210",
+        "email": "fortunateventures123@gmail.com"
+      },
+      "customerDetails": {
+        "customerId": "cust_1789138082173",
+        "name": "Ashraful Alom",
+        "email": "ashrafulalom12042002@gmail.com",
+        "mobile": "6901320430",
+        "address": "Naharkatia Estate Delivery Point",
+        "city": "Dibrugarh",
+        "state": "Assam",
+        "pincode": "786610"
+      },
+      "items": [
+        {
+          "productId": "prod_tea_assam_500g",
+          "productName": "Assam Black Tea",
+          "sku": "TN-ABT-500G",
+          "hsnCode": "0902",
+          "weight": 500,
+          "unit": "g",
+          "quantity": 1,
+          "unitPrice": 450,
+          "taxableValue": 428.57,
+          "gstRate": 5,
+          "cgst": 10.72,
+          "sgst": 10.71,
+          "igst": 0,
+          "total": 450
+        }
+      ],
+      "subtotal": 428.57,
+      "taxableAmount": 428.57,
+      "gstRate": 5,
+      "cgst": 10.72,
+      "sgst": 10.71,
+      "igst": 0,
+      "shipping": 0,
+      "grandTotal": 450,
+      "amountInWords": "Four Hundred Fifty Rupees Only",
+      "termsAndConditions": "1. Goods once sold will not be taken back unless defective.\n2. Subject to Dibrugarh, Assam jurisdiction.\n3. Keep tea pouches sealed in a cool, dry place away from moisture and strong odors.",
+      "bankDetails": {
+        "bankName": "State Bank of India",
+        "accountNumber": "38291048291",
+        "ifsc": "SBIN0001234",
+        "upi": "fortunateventures@sbi"
+      },
+      "status": "CANCELLED",
+      "paymentStatus": "UNPAID",
+      "createdAt": "2026-09-11T15:06:15.789Z"
+    },
+    {
+      "invoiceId": "inv_1789139181869",
+      "invoiceNumber": "INV-2026-000003",
+      "orderId": "order_1789138221109_porkl",
+      "orderNumber": "TN-2026-000002",
+      "saleId": "sale_1789139181869",
+      "invoiceDate": "2026-09-11",
+      "dueDate": "2026-09-11",
+      "businessDetails": {
+        "businessName": "Fortunate Ventures",
+        "brandName": "Tea Nest",
+        "gstin": "18AABCF1234F1Z5",
+        "pan": "AABCF1234F",
+        "address": "Naharkatia, Dist- Dibrugarh",
+        "city": "Dibrugarh",
+        "state": "Assam",
+        "pincode": "786610",
+        "phone": "+91 98765 43210",
+        "email": "fortunateventures123@gmail.com"
+      },
+      "customerDetails": {
+        "customerId": "cust_1789138082173",
+        "name": "Ashraful Alom",
+        "email": "ashrafulalom12042002@gmail.com",
+        "mobile": "6901320430",
+        "address": "Naharkatia Estate Delivery Point",
+        "city": "Dibrugarh",
+        "state": "Assam",
+        "pincode": "786610"
+      },
+      "items": [
+        {
+          "productId": "prod_tea_assam_500g",
+          "productName": "Assam Black Tea",
+          "sku": "TN-ABT-500G",
+          "hsnCode": "0902",
+          "weight": 500,
+          "unit": "g",
+          "quantity": 1,
+          "unitPrice": 450,
+          "taxableValue": 428.57,
+          "gstRate": 5,
+          "cgst": 10.72,
+          "sgst": 10.71,
+          "igst": 0,
+          "total": 450
+        }
+      ],
+      "subtotal": 428.57,
+      "taxableAmount": 428.57,
+      "gstRate": 5,
+      "cgst": 10.72,
+      "sgst": 10.71,
+      "igst": 0,
+      "shipping": 0,
+      "grandTotal": 450,
+      "amountInWords": "Four Hundred Fifty Rupees Only",
+      "termsAndConditions": "1. Goods once sold will not be taken back unless defective.\n2. Subject to Dibrugarh, Assam jurisdiction.\n3. Keep tea pouches sealed in a cool, dry place away from moisture and strong odors.",
+      "bankDetails": {
+        "bankName": "State Bank of India",
+        "accountNumber": "38291048291",
+        "ifsc": "SBIN0001234",
+        "upi": "fortunateventures@sbi"
+      },
+      "status": "CANCELLED",
+      "paymentStatus": "UNPAID",
+      "createdAt": "2026-09-11T15:06:21.869Z"
+    },
+    {
+      "invoiceId": "inv_1789153761208",
+      "invoiceNumber": "INV-2026-000004",
+      "orderId": "order_1789138221109_porkl",
+      "orderNumber": "TN-2026-000002",
+      "saleId": "sale_1789153761207",
+      "invoiceDate": "2026-09-11",
+      "dueDate": "2026-09-11",
+      "businessDetails": {
+        "businessName": "Tea Nest",
+        "brandName": "Tea Nest",
+        "gstin": "18AABCF1234F1Z5",
+        "pan": "AABCF1234F",
+        "address": "Naharkatia, Dist- Dibrugarh",
+        "city": "Dibrugarh",
+        "state": "Assam",
+        "pincode": "786610",
+        "phone": "+918822308551",
+        "email": "TeaNest@gmail.com"
+      },
+      "customerDetails": {
+        "customerId": "cust_1789138082173",
+        "name": "Ashraful Alom",
+        "email": "ashrafulalom12042002@gmail.com",
+        "mobile": "6901320430",
+        "address": "Naharkatia Estate Delivery Point",
+        "city": "Dibrugarh",
+        "state": "Assam",
+        "pincode": "786610"
+      },
+      "items": [
+        {
+          "productId": "prod_tea_assam_500g",
+          "productName": "Assam Black Tea",
+          "sku": "TN-ABT-500G",
+          "hsnCode": "0902",
+          "weight": 500,
+          "unit": "g",
+          "quantity": 1,
+          "unitPrice": 450,
+          "taxableValue": 428.57,
+          "gstRate": 5,
+          "cgst": 10.72,
+          "sgst": 10.71,
+          "igst": 0,
+          "total": 450
+        }
+      ],
+      "subtotal": 428.57,
+      "taxableAmount": 428.57,
+      "gstRate": 5,
+      "cgst": 10.72,
+      "sgst": 10.71,
+      "igst": 0,
+      "shipping": 0,
+      "grandTotal": 450,
+      "amountInWords": "Four Hundred Fifty Rupees Only",
+      "termsAndConditions": "1. Goods once sold will not be taken back unless defective.\n2. Subject to Dibrugarh, Assam jurisdiction.\n3. Keep tea pouches sealed in a cool, dry place away from moisture and strong odors.",
+      "bankDetails": {
+        "bankName": "State Bank of India",
+        "accountNumber": "1234567890",
+        "ifsc": "test",
+        "upi": "teanest@sbi"
+      },
+      "status": "ISSUED",
+      "createdAt": "2026-09-11T19:09:21.207Z"
+    }
+  ],
+  "blogs": [
+    {
+      "id": "blog_chai_to_single_origin",
+      "title": "From Chai to Single-Origin Tea: The New Indian Tea Consumer",
+      "slug": "from-chai-to-single-origin-tea",
+      "excerpt": "How urban connoisseurs are rediscovering estate-direct orthodox leaf alongside daily kadak chai.",
+      "content": "For decades in India, tea was synonymous with spiced milk chai—a comforting, sweet, heavily boiled concoction of CTC tea, ginger, and cardamom. While that beloved morning ritual remains deeply woven into the country's fabric, a quiet renaissance has taken root across Indian teacups.\n\n### The Rise of the Connoisseur\nToday's discerning tea drinker wants to know where their leaves were plucked, at what elevation, and during which flush. Similar to the specialty coffee and craft chocolate revolutions, tea enthusiasts are seeking out single-origin orthodox teas that celebrate terroir.\n\n### What Makes Upper Assam Unique?\nIn the mist-laden lowlands flanking the Brahmaputra River, particularly surrounding Dibrugarh and Naharkatia, tea bushes thrive in dense alluvial soil, heavy seasonal monsoons, and high humidity. This unique microclimate yields the world-renowned *Camellia sinensis var. assamica*, distinguished by:\n- Deep amber, golden-tipped liquor\n- Pronounced malty sweetness\n- A brisk, invigorating body that stands tall both neat and with a splash of warm milk\n\n### Moving Beyond Mass-Market Blends\nCommercial supermarket brands typically blend hundreds of dust-grade teas from disparate estates to maintain an artificial, uniform baseline. In contrast, **Tea Nest** sources whole and broken orthodox leaf directly from certified gardens. By shortening the supply chain from months to mere days, drinkers experience the true volatile essential oils and rich antioxidants of fresh first-flush pluckings.\n\nNext time you steep your morning cup, pause before reaching for milk and sugar. Sip it clear, inhale the muscatel and malt aromatics, and taste two centuries of Assam heritage in a single brew.",
+      "coverImage": {
+        "secureUrl": "/images/tea_nest_front.jpg",
+        "altText": "Tea Nest Assam Orthodox Leaf"
+      },
+      "author": "Tea Nest Editorial",
+      "category": "Tea Culture",
+      "tags": [
+        "Tea Culture",
+        "Single Origin",
+        "Assam Tea",
+        "Artisanal"
+      ],
+      "readTime": "4 min read",
+      "isPublished": true,
+      "publishedAt": "2026-09-08T18:28:22.333Z",
+      "createdAt": "2026-09-06T18:28:22.333Z",
+      "updatedAt": "2026-09-08T18:28:22.333Z",
+      "createdBy": "admin@teanest.in"
+    },
+    {
+      "id": "blog_5_brewing_mistakes",
+      "title": "5 Brewing Mistakes That Are Ruining Your Cup (And How to Fix Them)",
+      "slug": "5-brewing-mistakes-ruining-your-cup",
+      "excerpt": "Water temperature, steeping time, and leaf ratio: the exact secrets to extracting brisk liquor without bitterness.",
+      "content": "Brewing premium orthodox tea is both an art and a simple science. Even the highest-grade golden-tipped Assam leaf can turn harsh, flat, or astringent if prepared carelessly. Here are the five most common brewing mistakes and how to brew perfection every single time.\n\n### 1. Using Scalding Boiling Water Directly\nWhile CTC black tea withstands rolling boils, delicate whole-leaf orthodox black tea thrives best at **90°C to 95°C**. \n* **Fix**: Bring fresh water to a boil, then remove from heat and let it rest for 45 to 60 seconds before pouring over your leaves.\n\n### 2. Over-Steeping Past Four Minutes\nLeaving leaves in the teapot indefinitely extracts heavy, bitter tannins and masks the floral malt character.\n* **Fix**: For standard 2.5g of leaves per 200ml cup, steep strictly for **3 to 4 minutes**. Strain completely or decant immediately into cups.\n\n### 3. Reboiling Stale Water\nReheating water repeatedly depletes dissolved oxygen, resulting in a dull, lifeless liquor lacking briskness.\n* **Fix**: Always start with cold, fresh filtered water. Aerated water brings out the brisk sparkle of Assam orthodox leaf.\n\n### 4. Eyeballing Leaf Quantity\nUsing a small kitchen teaspoon often leads to under-dosing or over-dosing, depending on leaf curl density.\n* **Fix**: Use approximately 2 to 2.5 grams of orthodox leaf for every 180–200 ml of water (roughly one heaping teaspoon).\n\n### 5. Storing Tea in Clear Glass or Near Spices\nTea leaves are hygroscopic sponges—they avidly absorb ambient moisture, sunlight, and strong kitchen odors.\n* **Fix**: Keep your Tea Nest zip-lock pouch tightly sealed in a cool, dark cupboard away from spice jars. Freshness is key to aromatic richness.",
+      "coverImage": {
+        "secureUrl": "/images/hero_slide_2.jpg",
+        "altText": "Fresh Assam Tea Plucking at Sunset"
+      },
+      "author": "Master Blender, Naharkatia",
+      "category": "Brewing Masterclass",
+      "tags": [
+        "Brewing Guide",
+        "Tea Masterclass",
+        "Black Tea"
+      ],
+      "readTime": "5 min read",
+      "isPublished": true,
+      "publishedAt": "2026-09-09T18:28:22.333Z",
+      "createdAt": "2026-09-07T18:28:22.333Z",
+      "updatedAt": "2026-09-09T18:28:22.333Z",
+      "createdBy": "admin@teanest.in"
+    },
+    {
+      "id": "blog_story_of_assam_tea",
+      "title": "The Tea That Changed Afternoon Tea Forever: The Story of Assam",
+      "slug": "story-of-assam-tea",
+      "excerpt": "How Naharkatia and the Upper Brahmaputra valley established the world's most invigorating breakfast brew.",
+      "content": "Before the early 19th century, the global tea trade was an absolute monopoly held by Imperial China. Britain traded silver for Chinese green and bohea teas, unaware that deep within the dense subtropical jungles of Northeast India, an indigenous wild tea plant had been cherished for generations by local tribes.\n\n### The Singpho Secret\nThe Singpho and Khamti peoples of Upper Assam brewed *Phikap*—sun-dried wild tea leaves steeped in bamboo hollows. In 1823, a Scottish merchant and adventurer named Robert Bruce met Singpho chief Bessa Gam, who introduced him to these wild, thick-leaved evergreen trees growing naturally in the hills of Naharkatia and Sadiya.\n\nBotanical analysis in Calcutta initially caused uproar: it was declared a distinct variety, *Camellia sinensis var. assamica*, with larger leaves, deeper root systems, and higher natural caffeine content than Chinese varieties.\n\n### The Birth of the Assam Liquor\nBy 1838, the first consignment of twelve tea chests arrived at London's East India Docks, commanding staggering auction prices. Connoisseurs marveled at its dark garnet liquor, natural sweetness, and punchy maltiness that held up magnificently against cold climates and splash of full-cream milk.\n\n### Tea Nest: Carrying the Legacy Forward\nToday, nearly two centuries later, Tea Nest honors this heritage. Nestled in the Naharkatia estate belt of Dibrugarh, our garden managers adhere to traditional orthodox processing—careful withering, gentle orthodox rolling that preserves leaf tips, and timed oxidation that imparts that unmistakable golden hue.\n\nEvery pack of Tea Nest is a direct continuation of Assam's historic gift to world culture.",
+      "coverImage": {
+        "secureUrl": "/images/tea_nest_back.jpg",
+        "altText": "Assam Tea Garden Heritage"
+      },
+      "author": "Brahmaputra Heritage Trust",
+      "category": "Assam History",
+      "tags": [
+        "Assam History",
+        "Tea Heritage",
+        "Brahmaputra",
+        "Naharkatia"
+      ],
+      "readTime": "6 min read",
+      "isPublished": true,
+      "publishedAt": "2026-09-10T18:28:22.333Z",
+      "createdAt": "2026-09-09T18:28:22.333Z",
+      "updatedAt": "2026-09-10T18:28:22.333Z",
+      "createdBy": "admin@teanest.in"
+    }
+  ],
+  "inventoryMovements": [
+    {
+      "movementId": "mov_init_100",
+      "productId": "prod_tea_assam_500g",
+      "type": "PURCHASE_INTAKE",
+      "quantity": 100,
+      "balanceAfter": 100,
+      "referenceType": "PURCHASE_ORDER",
+      "referenceId": "PO-INITIAL",
+      "batchNumber": "TN-BATCH-2026-001",
+      "costPerUnit": 220,
+      "notes": "Initial inventory intake from Brahmaputra Organic Tea Estates",
+      "createdAt": "2026-09-10T20:37:32.473Z",
+      "createdBy": "admin_super_teanest"
+    },
+    {
+      "movementId": "mov_1789073018664_x18t",
+      "productId": "prod_tea_assam_500g",
+      "productName": "Assam Black Tea",
+      "type": "SALE",
+      "quantity": 1,
+      "beforeQuantity": 100,
+      "afterQuantity": 99,
+      "referenceId": "TN-2026-000001",
+      "reason": "Customer order confirmation: TN-2026-000001",
+      "createdBy": "admin@teanest.in",
+      "createdAt": "2026-09-10T20:43:38.664Z"
+    },
+    {
+      "movementId": "mov_1789139175789_lm71",
+      "productId": "prod_tea_assam_500g",
+      "productName": "Assam Black Tea",
+      "type": "SALE",
+      "quantity": 1,
+      "beforeQuantity": 99,
+      "afterQuantity": 98,
+      "referenceId": "TN-2026-000003",
+      "reason": "Customer order confirmation: TN-2026-000003",
+      "createdBy": "admin@teanest.in",
+      "createdAt": "2026-09-11T15:06:15.789Z"
+    },
+    {
+      "movementId": "mov_1789139181869_ujax",
+      "productId": "prod_tea_assam_500g",
+      "productName": "Assam Black Tea",
+      "type": "SALE",
+      "quantity": 1,
+      "beforeQuantity": 98,
+      "afterQuantity": 97,
+      "referenceId": "TN-2026-000002",
+      "reason": "Customer order confirmation: TN-2026-000002",
+      "createdBy": "admin@teanest.in",
+      "createdAt": "2026-09-11T15:06:21.869Z"
+    },
+    {
+      "movementId": "mov_1789153761207_7iv4",
+      "productId": "prod_tea_assam_500g",
+      "productName": "Assam Black Tea",
+      "type": "SALE",
+      "quantity": 1,
+      "beforeQuantity": 17,
+      "afterQuantity": 16,
+      "referenceId": "TN-2026-000002",
+      "reason": "Customer order confirmation: TN-2026-000002",
+      "createdBy": "admin@teanest.in",
+      "createdAt": "2026-09-11T19:09:21.207Z"
+    }
+  ],
+  "lowStockAlerts": [
+    {
+      "alertId": "alert_prod_tea_assam_500g_1789153761207",
+      "productId": "prod_tea_assam_500g",
+      "productName": "Assam Black Tea",
+      "currentStock": 16,
+      "threshold": 70,
+      "status": "ACTIVE",
+      "createdAt": "2026-09-11T19:09:21.207Z"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "sup_naharkatia_estate",
+      "name": "Pranab Borah",
+      "companyName": "Brahmaputra Organic Tea Estates",
+      "phone": "+91 98540 11223",
+      "email": "estate@brahmaputratea.com",
+      "gstin": "18AAECB4921K1ZF",
+      "address": "Naharkatia Tea Division, Plot 42",
+      "city": "Dibrugarh",
+      "state": "Assam",
+      "pincode": "786610",
+      "paymentTerms": "Net 30",
+      "openingBalance": 0,
+      "currentBalance": 0,
+      "status": "ACTIVE",
+      "notes": "Primary supplier of premium first-flush Assam orthodox and CTC black tea leaves.",
+      "createdAt": "2026-09-10T20:36:58.772Z",
+      "updatedAt": "2026-09-10T20:36:58.772Z"
+    }
+  ],
+  "purchases": [],
+  "expenses": [],
+  "customers": [
+    {
+      "uid": "cust_1789072896281",
+      "name": "Biraj Saikia",
+      "email": "biraj@teanest.in",
+      "mobile": "9864112233",
+      "address": "house-104 , road- NH 2,  Guwahati",
+      "city": "Dibrugarh",
+      "state": "Assam",
+      "pincode": "786610",
+      "createdAt": "2026-09-10T20:41:36.281Z",
+      "updatedAt": "2026-09-11T16:52:01.240Z",
+      "role": "customer",
+      "status": "ACTIVE",
+      "totalOrders": 2,
+      "confirmedOrders": 0,
+      "cancelledOrders": 0,
+      "totalSpent": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": "2026-09-10T20:41:57.724Z"
+    },
+    {
+      "uid": "cust_1789138082173",
+      "name": "Ashraful Alom",
+      "email": "ashrafulalom12042002@gmail.com",
+      "mobile": "6901320430",
+      "address": "",
+      "city": "Dibrugarh",
+      "state": "Assam",
+      "pincode": "786610",
+      "createdAt": "2026-09-11T14:48:02.173Z",
+      "updatedAt": "2026-09-11T14:48:02.173Z",
+      "role": "customer",
+      "status": "ACTIVE",
+      "totalOrders": 0,
+      "confirmedOrders": 0,
+      "cancelledOrders": 0,
+      "totalSpent": 0,
+      "averageOrderValue": 0
+    }
+  ],
+  "adminUsers": [
+    {
+      "uid": "admin_super_teanest",
+      "email": "admin@teanest.in",
+      "name": "Tea Nest Super Admin",
+      "role": "SUPER_ADMIN",
+      "isActive": true,
+      "createdAt": "2026-09-10T20:36:58.771Z"
+    }
+  ],
+  "auditLogs": [
+    {
+      "logId": "log_1789073018665",
+      "actorUid": "admin_super_teanest",
+      "actorEmail": "admin@teanest.in",
+      "actorRole": "SUPER_ADMIN",
+      "action": "ORDER_CONFIRMED",
+      "entityType": "ORDER",
+      "entityId": "order_1789072917724_4vkqz",
+      "before": {
+        "status": "WHATSAPP_PENDING",
+        "paymentStatus": "UNPAID"
+      },
+      "after": {
+        "status": "CONFIRMED",
+        "paymentStatus": "PAID",
+        "invoiceNumber": "INV-2026-000001"
+      },
+      "timestamp": "2026-09-10T20:43:38.664Z"
+    },
+    {
+      "logId": "log_1789139175789",
+      "actorUid": "admin_super_teanest",
+      "actorEmail": "admin@teanest.in",
+      "actorRole": "SUPER_ADMIN",
+      "action": "ORDER_CONFIRMED",
+      "entityType": "ORDER",
+      "entityId": "order_1789138236463_nmya7",
+      "before": {
+        "status": "WHATSAPP_PENDING",
+        "paymentStatus": "UNPAID"
+      },
+      "after": {
+        "status": "CONFIRMED",
+        "paymentStatus": "PAID",
+        "invoiceNumber": "INV-2026-000002"
+      },
+      "timestamp": "2026-09-11T15:06:15.789Z"
+    },
+    {
+      "logId": "log_1789139181869",
+      "actorUid": "admin_super_teanest",
+      "actorEmail": "admin@teanest.in",
+      "actorRole": "SUPER_ADMIN",
+      "action": "ORDER_CONFIRMED",
+      "entityType": "ORDER",
+      "entityId": "order_1789138221109_porkl",
+      "before": {
+        "status": "WHATSAPP_PENDING",
+        "paymentStatus": "UNPAID"
+      },
+      "after": {
+        "status": "CONFIRMED",
+        "paymentStatus": "PAID",
+        "invoiceNumber": "INV-2026-000003"
+      },
+      "timestamp": "2026-09-11T15:06:21.869Z"
+    },
+    {
+      "logId": "log_1789140106618",
+      "actorUid": "admin_super_teanest",
+      "actorEmail": "admin@teanest.in",
+      "actorRole": "SUPER_ADMIN",
+      "action": "SETTINGS_UPDATED",
+      "entityType": "SETTINGS",
+      "entityId": "default",
+      "timestamp": "2026-09-11T15:21:46.618Z"
+    },
+    {
+      "logId": "log_1789145142247",
+      "actorUid": "admin_super_teanest",
+      "actorEmail": "admin@teanest.in",
+      "actorRole": "SUPER_ADMIN",
+      "action": "PRODUCT_UPDATED",
+      "entityType": "PRODUCT",
+      "entityId": "prod_tea_assam_500g",
+      "before": {
+        "id": "prod_tea_assam_500g",
+        "name": "Assam Black Tea",
+        "slug": "assam-black-tea",
+        "description": "Rich • Refreshing • Aromatic. Carefully handpicked from the finest tea gardens of Dibrugarh, our teas are crafted to bring you a pure, refreshing and enriching experience in every cup.",
+        "sku": "TN-ABT-500G",
+        "categoryId": "black-tea",
+        "categoryName": "Assam Black Tea",
+        "weight": 500,
+        "unit": "g",
+        "mrp": 499,
+        "sellingPrice": 450,
+        "purchasePrice": 220,
+        "gstRate": 5,
+        "hsnCode": "0902",
+        "stockQuantity": 97,
+        "stockReferenceQty": 100,
+        "lowStockPercent": 70,
+        "lowStockThresholdQty": 70,
+        "images": [
+          {
+            "cloudinaryPublicId": "tea-nest/products/assam-black-tea/front",
+            "secureUrl": "/images/tea_nest_front.jpg",
+            "width": 1080,
+            "height": 1920,
+            "altText": "Tea Nest Assam Black Tea 500g Stand-up Pouch Front",
+            "sortOrder": 1
+          },
+          {
+            "cloudinaryPublicId": "tea-nest/products/assam-black-tea/back",
+            "secureUrl": "/images/tea_nest_back.jpg",
+            "width": 1080,
+            "height": 1920,
+            "altText": "Tea Nest Assam Black Tea 500g Stand-up Pouch Back Info Label",
+            "sortOrder": 2
+          }
+        ],
+        "thumbnail": {
+          "cloudinaryPublicId": "tea-nest/products/assam-black-tea/front",
+          "secureUrl": "/images/tea_nest_front.jpg",
+          "width": 1080,
+          "height": 1920,
+          "altText": "Tea Nest Assam Black Tea 500g Thumbnail",
+          "sortOrder": 1
+        },
+        "isPublished": true,
+        "isFeatured": true,
+        "isActive": true,
+        "createdAt": "2026-09-10T20:36:58.772Z",
+        "updatedAt": "2026-09-11T15:06:21.869Z",
+        "createdBy": "admin@teanest.in"
+      },
+      "after": {
+        "id": "prod_tea_assam_500g",
+        "name": "Assam Black Tea",
+        "slug": "assam-black-tea",
+        "description": "Rich • Refreshing • Aromatic. Carefully handpicked from the finest tea gardens of Dibrugarh, our teas are crafted to bring you a pure, refreshing and enriching experience in every cup.",
+        "sku": "TN-ABT-500G",
+        "categoryId": "black-tea",
+        "categoryName": "Assam Black Tea",
+        "weight": 500,
+        "unit": "g",
+        "mrp": 499,
+        "sellingPrice": 450,
+        "purchasePrice": 220,
+        "gstRate": 5,
+        "hsnCode": "0902",
+        "stockQuantity": 17,
+        "stockReferenceQty": 100,
+        "lowStockPercent": 70,
+        "lowStockThresholdQty": 70,
+        "images": [
+          {
+            "cloudinaryPublicId": "front",
+            "secureUrl": "/images/tea_nest_front.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Front Packaging",
+            "sortOrder": 1
+          },
+          {
+            "cloudinaryPublicId": "back",
+            "secureUrl": "/images/tea_nest_back.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Back Packaging",
+            "sortOrder": 2
+          }
+        ],
+        "thumbnail": {
+          "cloudinaryPublicId": "front",
+          "secureUrl": "/images/tea_nest_front.jpg",
+          "width": 800,
+          "height": 1200,
+          "altText": "Assam Black Tea Thumbnail",
+          "sortOrder": 1
+        },
+        "isPublished": true,
+        "isFeatured": true,
+        "isActive": true,
+        "createdAt": "2026-09-10T20:36:58.772Z",
+        "updatedAt": "2026-09-11T16:45:42.242Z",
+        "createdBy": "admin@teanest.in"
+      },
+      "timestamp": "2026-09-11T16:45:42.247Z"
+    },
+    {
+      "logId": "log_1789145682763",
+      "actorUid": "admin_super_teanest",
+      "actorEmail": "admin@teanest.in",
+      "actorRole": "SUPER_ADMIN",
+      "action": "PRODUCT_UPDATED",
+      "entityType": "PRODUCT",
+      "entityId": "prod_tea_assam_500g",
+      "before": {
+        "id": "prod_tea_assam_500g",
+        "name": "Assam Black Tea",
+        "slug": "assam-black-tea",
+        "description": "Rich • Refreshing • Aromatic. Carefully handpicked from the finest tea gardens of Dibrugarh, our teas are crafted to bring you a pure, refreshing and enriching experience in every cup.",
+        "sku": "TN-ABT-500G",
+        "categoryId": "black-tea",
+        "categoryName": "Assam Black Tea",
+        "weight": 500,
+        "unit": "g",
+        "mrp": 499,
+        "sellingPrice": 450,
+        "purchasePrice": 220,
+        "gstRate": 5,
+        "hsnCode": "0902",
+        "stockQuantity": 17,
+        "stockReferenceQty": 100,
+        "lowStockPercent": 70,
+        "lowStockThresholdQty": 70,
+        "images": [
+          {
+            "cloudinaryPublicId": "front",
+            "secureUrl": "/images/tea_nest_front.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Front Packaging",
+            "sortOrder": 1
+          },
+          {
+            "cloudinaryPublicId": "back",
+            "secureUrl": "/images/tea_nest_back.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Back Packaging",
+            "sortOrder": 2
+          }
+        ],
+        "thumbnail": {
+          "cloudinaryPublicId": "front",
+          "secureUrl": "/images/tea_nest_front.jpg",
+          "width": 800,
+          "height": 1200,
+          "altText": "Assam Black Tea Thumbnail",
+          "sortOrder": 1
+        },
+        "isPublished": true,
+        "isFeatured": true,
+        "isActive": true,
+        "createdAt": "2026-09-10T20:36:58.772Z",
+        "updatedAt": "2026-09-11T16:45:42.242Z",
+        "createdBy": "admin@teanest.in"
+      },
+      "after": {
+        "id": "prod_tea_assam_500g",
+        "name": "Assam Black Tea",
+        "slug": "assam-black-tea",
+        "description": "Rich • Refreshing • Aromatic. Carefully handpicked from the finest tea gardens of Dibrugarh, our teas are crafted to bring you a pure, refreshing and enriching experience in every cup.",
+        "sku": "TN-ABT-500G",
+        "categoryId": "black-tea",
+        "categoryName": "Assam Black Tea",
+        "weight": 500,
+        "unit": "g",
+        "mrp": 499,
+        "sellingPrice": 450,
+        "purchasePrice": 220,
+        "gstRate": 5,
+        "hsnCode": "0902",
+        "stockQuantity": 17,
+        "stockReferenceQty": 100,
+        "lowStockPercent": 70,
+        "lowStockThresholdQty": 70,
+        "images": [
+          {
+            "cloudinaryPublicId": "front",
+            "secureUrl": "/images/tea_nest_front.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Front Packaging",
+            "sortOrder": 1
+          },
+          {
+            "cloudinaryPublicId": "back",
+            "secureUrl": "/images/tea_nest_back.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Back Packaging",
+            "sortOrder": 2
+          }
+        ],
+        "thumbnail": {
+          "cloudinaryPublicId": "front",
+          "secureUrl": "/images/tea_nest_front.jpg",
+          "width": 800,
+          "height": 1200,
+          "altText": "Assam Black Tea Thumbnail",
+          "sortOrder": 1
+        },
+        "isPublished": true,
+        "isFeatured": true,
+        "isActive": false,
+        "createdAt": "2026-09-10T20:36:58.772Z",
+        "updatedAt": "2026-09-11T16:54:42.762Z",
+        "createdBy": "admin@teanest.in"
+      },
+      "timestamp": "2026-09-11T16:54:42.763Z"
+    },
+    {
+      "logId": "log_1789145688958",
+      "actorUid": "admin_super_teanest",
+      "actorEmail": "admin@teanest.in",
+      "actorRole": "SUPER_ADMIN",
+      "action": "PRODUCT_UPDATED",
+      "entityType": "PRODUCT",
+      "entityId": "prod_tea_assam_500g",
+      "before": {
+        "id": "prod_tea_assam_500g",
+        "name": "Assam Black Tea",
+        "slug": "assam-black-tea",
+        "description": "Rich • Refreshing • Aromatic. Carefully handpicked from the finest tea gardens of Dibrugarh, our teas are crafted to bring you a pure, refreshing and enriching experience in every cup.",
+        "sku": "TN-ABT-500G",
+        "categoryId": "black-tea",
+        "categoryName": "Assam Black Tea",
+        "weight": 500,
+        "unit": "g",
+        "mrp": 499,
+        "sellingPrice": 450,
+        "purchasePrice": 220,
+        "gstRate": 5,
+        "hsnCode": "0902",
+        "stockQuantity": 17,
+        "stockReferenceQty": 100,
+        "lowStockPercent": 70,
+        "lowStockThresholdQty": 70,
+        "images": [
+          {
+            "cloudinaryPublicId": "front",
+            "secureUrl": "/images/tea_nest_front.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Front Packaging",
+            "sortOrder": 1
+          },
+          {
+            "cloudinaryPublicId": "back",
+            "secureUrl": "/images/tea_nest_back.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Back Packaging",
+            "sortOrder": 2
+          }
+        ],
+        "thumbnail": {
+          "cloudinaryPublicId": "front",
+          "secureUrl": "/images/tea_nest_front.jpg",
+          "width": 800,
+          "height": 1200,
+          "altText": "Assam Black Tea Thumbnail",
+          "sortOrder": 1
+        },
+        "isPublished": true,
+        "isFeatured": true,
+        "isActive": false,
+        "createdAt": "2026-09-10T20:36:58.772Z",
+        "updatedAt": "2026-09-11T16:54:42.762Z",
+        "createdBy": "admin@teanest.in"
+      },
+      "after": {
+        "id": "prod_tea_assam_500g",
+        "name": "Assam Black Tea",
+        "slug": "assam-black-tea",
+        "description": "Rich • Refreshing • Aromatic. Carefully handpicked from the finest tea gardens of Dibrugarh, our teas are crafted to bring you a pure, refreshing and enriching experience in every cup.",
+        "sku": "TN-ABT-500G",
+        "categoryId": "black-tea",
+        "categoryName": "Assam Black Tea",
+        "weight": 500,
+        "unit": "g",
+        "mrp": 499,
+        "sellingPrice": 450,
+        "purchasePrice": 220,
+        "gstRate": 5,
+        "hsnCode": "0902",
+        "stockQuantity": 17,
+        "stockReferenceQty": 100,
+        "lowStockPercent": 70,
+        "lowStockThresholdQty": 70,
+        "images": [
+          {
+            "cloudinaryPublicId": "front",
+            "secureUrl": "/images/tea_nest_front.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Front Packaging",
+            "sortOrder": 1
+          },
+          {
+            "cloudinaryPublicId": "back",
+            "secureUrl": "/images/tea_nest_back.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Back Packaging",
+            "sortOrder": 2
+          }
+        ],
+        "thumbnail": {
+          "cloudinaryPublicId": "front",
+          "secureUrl": "/images/tea_nest_front.jpg",
+          "width": 800,
+          "height": 1200,
+          "altText": "Assam Black Tea Thumbnail",
+          "sortOrder": 1
+        },
+        "isPublished": true,
+        "isFeatured": true,
+        "isActive": true,
+        "createdAt": "2026-09-10T20:36:58.772Z",
+        "updatedAt": "2026-09-11T16:54:48.958Z",
+        "createdBy": "admin@teanest.in"
+      },
+      "timestamp": "2026-09-11T16:54:48.958Z"
+    },
+    {
+      "logId": "log_1789145692523",
+      "actorUid": "admin_super_teanest",
+      "actorEmail": "admin@teanest.in",
+      "actorRole": "SUPER_ADMIN",
+      "action": "PRODUCT_UPDATED",
+      "entityType": "PRODUCT",
+      "entityId": "prod_tea_assam_500g",
+      "before": {
+        "id": "prod_tea_assam_500g",
+        "name": "Assam Black Tea",
+        "slug": "assam-black-tea",
+        "description": "Rich • Refreshing • Aromatic. Carefully handpicked from the finest tea gardens of Dibrugarh, our teas are crafted to bring you a pure, refreshing and enriching experience in every cup.",
+        "sku": "TN-ABT-500G",
+        "categoryId": "black-tea",
+        "categoryName": "Assam Black Tea",
+        "weight": 500,
+        "unit": "g",
+        "mrp": 499,
+        "sellingPrice": 450,
+        "purchasePrice": 220,
+        "gstRate": 5,
+        "hsnCode": "0902",
+        "stockQuantity": 17,
+        "stockReferenceQty": 100,
+        "lowStockPercent": 70,
+        "lowStockThresholdQty": 70,
+        "images": [
+          {
+            "cloudinaryPublicId": "front",
+            "secureUrl": "/images/tea_nest_front.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Front Packaging",
+            "sortOrder": 1
+          },
+          {
+            "cloudinaryPublicId": "back",
+            "secureUrl": "/images/tea_nest_back.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Back Packaging",
+            "sortOrder": 2
+          }
+        ],
+        "thumbnail": {
+          "cloudinaryPublicId": "front",
+          "secureUrl": "/images/tea_nest_front.jpg",
+          "width": 800,
+          "height": 1200,
+          "altText": "Assam Black Tea Thumbnail",
+          "sortOrder": 1
+        },
+        "isPublished": true,
+        "isFeatured": true,
+        "isActive": true,
+        "createdAt": "2026-09-10T20:36:58.772Z",
+        "updatedAt": "2026-09-11T16:54:48.958Z",
+        "createdBy": "admin@teanest.in"
+      },
+      "after": {
+        "id": "prod_tea_assam_500g",
+        "name": "Assam Black Tea",
+        "slug": "assam-black-tea",
+        "description": "Rich • Refreshing • Aromatic. Carefully handpicked from the finest tea gardens of Dibrugarh, our teas are crafted to bring you a pure, refreshing and enriching experience in every cup.",
+        "sku": "TN-ABT-500G",
+        "categoryId": "black-tea",
+        "categoryName": "Assam Black Tea",
+        "weight": 500,
+        "unit": "g",
+        "mrp": 499,
+        "sellingPrice": 450,
+        "purchasePrice": 220,
+        "gstRate": 5,
+        "hsnCode": "0902",
+        "stockQuantity": 17,
+        "stockReferenceQty": 100,
+        "lowStockPercent": 70,
+        "lowStockThresholdQty": 70,
+        "images": [
+          {
+            "cloudinaryPublicId": "front",
+            "secureUrl": "/images/tea_nest_front.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Front Packaging",
+            "sortOrder": 1
+          },
+          {
+            "cloudinaryPublicId": "back",
+            "secureUrl": "/images/tea_nest_back.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Back Packaging",
+            "sortOrder": 2
+          }
+        ],
+        "thumbnail": {
+          "cloudinaryPublicId": "front",
+          "secureUrl": "/images/tea_nest_front.jpg",
+          "width": 800,
+          "height": 1200,
+          "altText": "Assam Black Tea Thumbnail",
+          "sortOrder": 1
+        },
+        "isPublished": false,
+        "isFeatured": true,
+        "isActive": true,
+        "createdAt": "2026-09-10T20:36:58.772Z",
+        "updatedAt": "2026-09-11T16:54:52.522Z",
+        "createdBy": "admin@teanest.in"
+      },
+      "timestamp": "2026-09-11T16:54:52.523Z"
+    },
+    {
+      "logId": "log_1789145762246",
+      "actorUid": "admin_super_teanest",
+      "actorEmail": "admin@teanest.in",
+      "actorRole": "SUPER_ADMIN",
+      "action": "PRODUCT_UPDATED",
+      "entityType": "PRODUCT",
+      "entityId": "prod_tea_assam_500g",
+      "before": {
+        "id": "prod_tea_assam_500g",
+        "name": "Assam Black Tea",
+        "slug": "assam-black-tea",
+        "description": "Rich • Refreshing • Aromatic. Carefully handpicked from the finest tea gardens of Dibrugarh, our teas are crafted to bring you a pure, refreshing and enriching experience in every cup.",
+        "sku": "TN-ABT-500G",
+        "categoryId": "black-tea",
+        "categoryName": "Assam Black Tea",
+        "weight": 500,
+        "unit": "g",
+        "mrp": 499,
+        "sellingPrice": 450,
+        "purchasePrice": 220,
+        "gstRate": 5,
+        "hsnCode": "0902",
+        "stockQuantity": 17,
+        "stockReferenceQty": 100,
+        "lowStockPercent": 70,
+        "lowStockThresholdQty": 70,
+        "images": [
+          {
+            "cloudinaryPublicId": "front",
+            "secureUrl": "/images/tea_nest_front.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Front Packaging",
+            "sortOrder": 1
+          },
+          {
+            "cloudinaryPublicId": "back",
+            "secureUrl": "/images/tea_nest_back.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Back Packaging",
+            "sortOrder": 2
+          }
+        ],
+        "thumbnail": {
+          "cloudinaryPublicId": "front",
+          "secureUrl": "/images/tea_nest_front.jpg",
+          "width": 800,
+          "height": 1200,
+          "altText": "Assam Black Tea Thumbnail",
+          "sortOrder": 1
+        },
+        "isPublished": false,
+        "isFeatured": true,
+        "isActive": true,
+        "createdAt": "2026-09-10T20:36:58.772Z",
+        "updatedAt": "2026-09-11T16:54:52.522Z",
+        "createdBy": "admin@teanest.in"
+      },
+      "after": {
+        "id": "prod_tea_assam_500g",
+        "name": "Assam Black Tea",
+        "slug": "assam-black-tea",
+        "description": "Rich • Refreshing • Aromatic. Carefully handpicked from the finest tea gardens of Dibrugarh, our teas are crafted to bring you a pure, refreshing and enriching experience in every cup.",
+        "sku": "TN-ABT-500G",
+        "categoryId": "black-tea",
+        "categoryName": "Assam Black Tea",
+        "weight": 500,
+        "unit": "g",
+        "mrp": 499,
+        "sellingPrice": 450,
+        "purchasePrice": 220,
+        "gstRate": 5,
+        "hsnCode": "0902",
+        "stockQuantity": 17,
+        "stockReferenceQty": 100,
+        "lowStockPercent": 70,
+        "lowStockThresholdQty": 70,
+        "images": [
+          {
+            "cloudinaryPublicId": "front",
+            "secureUrl": "/images/tea_nest_front.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Front Packaging",
+            "sortOrder": 1
+          },
+          {
+            "cloudinaryPublicId": "back",
+            "secureUrl": "/images/tea_nest_back.jpg",
+            "width": 800,
+            "height": 1200,
+            "altText": "Assam Black Tea Back Packaging",
+            "sortOrder": 2
+          }
+        ],
+        "thumbnail": {
+          "cloudinaryPublicId": "front",
+          "secureUrl": "/images/tea_nest_front.jpg",
+          "width": 800,
+          "height": 1200,
+          "altText": "Assam Black Tea Thumbnail",
+          "sortOrder": 1
+        },
+        "isPublished": true,
+        "isFeatured": true,
+        "isActive": true,
+        "createdAt": "2026-09-10T20:36:58.772Z",
+        "updatedAt": "2026-09-11T16:56:02.245Z",
+        "createdBy": "admin@teanest.in"
+      },
+      "timestamp": "2026-09-11T16:56:02.246Z"
+    },
+    {
+      "logId": "log_1789153761208",
+      "actorUid": "admin_super_teanest",
+      "actorEmail": "admin@teanest.in",
+      "actorRole": "SUPER_ADMIN",
+      "action": "ORDER_CONFIRMED",
+      "entityType": "ORDER",
+      "entityId": "order_1789138221109_porkl",
+      "before": {
+        "status": "WHATSAPP_PENDING",
+        "paymentStatus": "PAID"
+      },
+      "after": {
+        "status": "CONFIRMED",
+        "paymentStatus": "PAID",
+        "invoiceNumber": "INV-2026-000004"
+      },
+      "timestamp": "2026-09-11T19:09:21.207Z"
+    },
+    {
+      "logId": "log_1789155147489",
+      "actorUid": "admin_super_teanest",
+      "actorEmail": "admin@teanest.in",
+      "actorRole": "SUPER_ADMIN",
+      "action": "LOGIN",
+      "entityType": "AUTH",
+      "entityId": "admin_super_teanest",
+      "timestamp": "2026-09-11T19:32:27.489Z"
+    }
+  ],
+  "crmTimeline": [
+    {
+      "id": "crm_1789072896281",
+      "customerId": "cust_1789072896281",
+      "type": "REGISTERED",
+      "description": "New customer registered: Biraj Saikia (9864112233)",
+      "createdAt": "2026-09-10T20:41:36.281Z"
+    },
+    {
+      "id": "crm_1789072917724",
+      "customerId": "cust_1789072896281",
+      "type": "ORDER_CREATED",
+      "description": "Order TN-2026-000001 created for ₹450.00 (WHATSAPP_PENDING)",
+      "metadata": {
+        "orderId": "order_1789072917724_4vkqz",
+        "orderNumber": "TN-2026-000001",
+        "total": 450
+      },
+      "createdAt": "2026-09-10T20:41:57.724Z"
+    },
+    {
+      "id": "crm_1789073018665",
+      "customerId": "cust_1789072896281",
+      "type": "ORDER_CONFIRMED",
+      "description": "Order TN-2026-000001 confirmed. Stock deducted and Invoice INV-2026-000001 generated.",
+      "metadata": {
+        "orderId": "order_1789072917724_4vkqz",
+        "invoiceId": "inv_1789073018665",
+        "saleId": "sale_1789073018664"
+      },
+      "createdAt": "2026-09-10T20:43:38.664Z"
+    },
+    {
+      "id": "crm_1789138082173",
+      "customerId": "cust_1789138082173",
+      "type": "REGISTERED",
+      "description": "New customer registered: Ashraful Alom (6901320430)",
+      "createdAt": "2026-09-11T14:48:02.173Z"
+    },
+    {
+      "id": "crm_1789138221109",
+      "customerId": "cust_1789138082173",
+      "type": "ORDER_CREATED",
+      "description": "Order TN-2026-000002 created for ₹450.00 (WHATSAPP_PENDING)",
+      "metadata": {
+        "orderId": "order_1789138221109_porkl",
+        "orderNumber": "TN-2026-000002",
+        "total": 450
+      },
+      "createdAt": "2026-09-11T14:50:21.109Z"
+    },
+    {
+      "id": "crm_1789138236463",
+      "customerId": "cust_1789138082173",
+      "type": "ORDER_CREATED",
+      "description": "Order TN-2026-000003 created for ₹450.00 (WHATSAPP_PENDING)",
+      "metadata": {
+        "orderId": "order_1789138236463_nmya7",
+        "orderNumber": "TN-2026-000003",
+        "total": 450
+      },
+      "createdAt": "2026-09-11T14:50:36.463Z"
+    },
+    {
+      "id": "crm_1789139175789",
+      "customerId": "cust_1789138082173",
+      "type": "ORDER_CONFIRMED",
+      "description": "Order TN-2026-000003 confirmed. Stock deducted and Invoice INV-2026-000002 generated.",
+      "metadata": {
+        "orderId": "order_1789138236463_nmya7",
+        "invoiceId": "inv_1789139175789",
+        "saleId": "sale_1789139175789"
+      },
+      "createdAt": "2026-09-11T15:06:15.789Z"
+    },
+    {
+      "id": "crm_1789139181869",
+      "customerId": "cust_1789138082173",
+      "type": "ORDER_CONFIRMED",
+      "description": "Order TN-2026-000002 confirmed. Stock deducted and Invoice INV-2026-000003 generated.",
+      "metadata": {
+        "orderId": "order_1789138221109_porkl",
+        "invoiceId": "inv_1789139181869",
+        "saleId": "sale_1789139181869"
+      },
+      "createdAt": "2026-09-11T15:06:21.869Z"
+    },
+    {
+      "id": "crm_1789153761208",
+      "customerId": "cust_1789138082173",
+      "type": "ORDER_CONFIRMED",
+      "description": "Order TN-2026-000002 confirmed. Stock deducted and Invoice INV-2026-000004 generated.",
+      "metadata": {
+        "orderId": "order_1789138221109_porkl",
+        "invoiceId": "inv_1789153761208",
+        "saleId": "sale_1789153761207"
+      },
+      "createdAt": "2026-09-11T19:09:21.207Z"
+    }
+  ],
+  "businessSettings": {
+    "brandName": "Tea Nest",
+    "businessName": "Tea Nest",
+    "phone": "+918822308551",
+    "email": "TeaNest@gmail.com",
+    "whatsappOrderNumber": "918822308551",
+    "address": "Naharkatia, Dist- Dibrugarh",
+    "city": "Dibrugarh",
+    "state": "Assam",
+    "pincode": "786610",
+    "gstin": "18AABCF1234F1Z5",
+    "pan": "AABCF1234F",
+    "currency": "INR",
+    "currencySymbol": "₹",
+    "invoicePrefix": "INV-2026-",
+    "startingInvoiceNumber": 1,
+    "orderPrefix": "TN-2026-",
+    "lowStockDefaultPercent": 70,
+    "terms": "1. Goods once sold will not be taken back unless defective.\n2. Subject to Dibrugarh, Assam jurisdiction.\n3. Keep tea pouches sealed in a cool, dry place away from moisture and strong odors.",
+    "bankName": "State Bank of India",
+    "accountNumber": "1234567890",
+    "ifsc": "test",
+    "upi": "teanest@sbi",
+    "orderSettings": {
+      "allowDirectWhatsapp": true,
+      "minOrderValue": 0,
+      "freeShippingThreshold": 999,
+      "defaultShippingCharge": 50
+    },
+    "socialMedia": {
+      "instagram": "https://instagram.com/teanest.tea",
+      "facebook": "https://facebook.com/teanest.tea",
+      "twitter": "https://twitter.com/teanest_tea"
+    },
+    "footerContent": "Handcrafted with reverence in the misty valleys of Naharkatia, Dibrugarh, Assam. A Product from Fortunate Ventures. All rights reserved.",
+    "updatedAt": "2026-09-11T15:21:46.617Z"
+  },
+  "counters": {
+    "orderNumber": 1,
+    "invoiceNumber": 1,
+    "saleNumber": 1,
+    "movementNumber": 101
+  },
+  "cart": [],
+  "currentAdmin": {
+    "uid": "admin_super_teanest",
+    "email": "admin@teanest.in",
+    "name": "Tea Nest Super Admin",
+    "role": "SUPER_ADMIN",
+    "isActive": true,
+    "createdAt": "2026-09-10T20:36:58.771Z"
+  },
+  "currentCustomer": null
+}
