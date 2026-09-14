@@ -106,24 +106,27 @@ export class AppStore {
         console.warn('[AppStore] Firestore live listener setup:', err);
       }
 
-      // 2. Local fallback sync server
-      this.pullFromServer();
-      setInterval(() => {
+      // 2. Local fallback sync server (only active during local development)
+      const isDev = typeof import.meta !== 'undefined' && Boolean((import.meta as any).env?.DEV);
+      if (isDev) {
         this.pullFromServer();
-      }, 2500);
+        setInterval(() => {
+          this.pullFromServer();
+        }, 2500);
 
-      if (typeof window.EventSource !== 'undefined') {
-        try {
-          const es = new EventSource('/api/events');
-          es.onmessage = () => this.pullFromServer();
-          es.addEventListener('ORDER_CREATED', () => this.pullFromServer());
-          es.addEventListener('ORDER_CONFIRMED', () => this.pullFromServer());
-          es.addEventListener('ORDER_UPDATED', () => this.pullFromServer());
-          es.addEventListener('INVENTORY_ADJUSTED', () => this.pullFromServer());
-          es.addEventListener('STATE_UPDATED', () => this.pullFromServer());
-          es.addEventListener('STATE_RESET', () => this.pullFromServer());
-        } catch {
-          // SSE fallback
+        if (typeof window.EventSource !== 'undefined') {
+          try {
+            const es = new EventSource('/api/events');
+            es.onmessage = () => this.pullFromServer();
+            es.addEventListener('ORDER_CREATED', () => this.pullFromServer());
+            es.addEventListener('ORDER_CONFIRMED', () => this.pullFromServer());
+            es.addEventListener('ORDER_UPDATED', () => this.pullFromServer());
+            es.addEventListener('INVENTORY_ADJUSTED', () => this.pullFromServer());
+            es.addEventListener('STATE_UPDATED', () => this.pullFromServer());
+            es.addEventListener('STATE_RESET', () => this.pullFromServer());
+          } catch {
+            // SSE fallback
+          }
         }
       }
     }
@@ -245,7 +248,8 @@ export class AppStore {
   }
 
   private async pushToServer(): Promise<void> {
-    if (typeof window === 'undefined' || this.syncInProgress) return;
+    const isDev = typeof import.meta !== 'undefined' && Boolean((import.meta as any).env?.DEV);
+    if (!isDev || typeof window === 'undefined' || this.syncInProgress) return;
     try {
       this.syncInProgress = true;
       await fetch(this.syncUrl, {
