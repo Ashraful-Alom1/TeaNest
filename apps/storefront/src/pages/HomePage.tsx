@@ -929,7 +929,7 @@ export const HomePage: React.FC = () => {
                 key={blog.id}
                 className="bg-white border border-[#e8ded0] rounded-xl overflow-hidden hover:shadow-lg transition-all flex flex-col justify-between group"
               >
-                <Link to={`/blog/${blog.slug}`} className="aspect-[16/10] bg-[#fdfaf5] overflow-hidden flex items-center justify-center border-b border-[#e8ded0] block">
+                <Link to={`/blog/${blog.slug}`} className="aspect-[16/10] bg-[#fdfaf5] overflow-hidden flex items-center justify-center border-b border-[#e8ded0]">
                   <img
                     src={getBlogCoverImageUrl(blog.coverImage)}
                     alt={blog.title}
