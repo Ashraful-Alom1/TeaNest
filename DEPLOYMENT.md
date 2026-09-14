@@ -2,13 +2,13 @@
 
 ## 1. Deployment Overview
 
-The Tea Nest platform can be deployed to modern cloud hosting platforms such as Firebase Hosting, Google Cloud Run, Vercel, or AWS Amplify.
+The Tea Nest platform is 100% platform-independent and can be deployed to any static or React-compatible cloud hosting provider (Vercel, Netlify, Cloudflare Pages, Render, GitHub Pages, Firebase Hosting, AWS S3/CloudFront, or any standard web server) without requiring any vendor-specific configuration files.
 
 ---
 
 ## 2. Environment Configuration
 
-Copy `.env.example` to `.env` in the root and in both application folders:
+Copy `.env.example` to `.env` in the root:
 
 ```env
 # Application Settings
@@ -25,28 +25,30 @@ VITE_FIREBASE_STORAGE_BUCKET="tea-nest.firebasestorage.app"
 VITE_FIREBASE_MESSAGING_SENDER_ID="38350226211"
 VITE_FIREBASE_APP_ID="1:38350226211:web:5d21b282b14cac92c18296"
 VITE_FIREBASE_MEASUREMENT_ID="G-SVLBRJVH71"
-
-# Business Compliance Details
-VITE_COMPANY_NAME="Fortunate Ventures"
-VITE_COMPANY_ADDRESS="Naharkatia, Dist - Dibrugarh, Assam, PIN - 786610"
-VITE_COMPANY_GSTIN="18AABCF1234F1Z5"
-VITE_COMPANY_PAN="AABCF1234F"
-VITE_COMPANY_EMAIL="fortunateventures123@gmail.com"
 ```
 
 ---
 
-## 3. Building for Production
+## 3. Universal Production Build (Any Platform)
 
-Compile both Storefront and Admin applications:
+Run the standard build command:
 
 ```bash
 npm run build
 ```
 
-This compiles:
-- `apps/storefront/dist/` (Storefront static bundle)
-- `apps/admin/dist/` (Admin console static bundle)
+### Build Output & Architecture
+The unified build automatically outputs to `/dist`:
+- **Storefront Client App**: `/dist/index.html` (Accessible at `/`)
+- **Admin ERP Console**: `/dist/admin/index.html` (Accessible at `/admin/`)
+- **Universal SPA Fallbacks**: Automatic `404.html` and `200.html` are generated so client-side SPA routing works seamlessly out-of-the-box on GitHub Pages, Surge, S3, Vercel, and standard servers without vendor configuration files.
+
+### Standard Platform Settings:
+| Setting | Value |
+|---|---|
+| **Build Command** | `npm run build` |
+| **Publish / Output Directory** | `dist` |
+| **Node.js Version** | `18` or `20` |
 
 ---
 
