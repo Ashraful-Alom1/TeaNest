@@ -10,8 +10,8 @@ export const FaqPage: React.FC = () => {
       a: 'Tea Nest is sourced directly from Naharkatia, Dibrugarh in Upper Assam—a region celebrated worldwide for producing teas with rich body, invigorating briskness, and natural sweet malt notes. Unlike mass-market dust blends, we preserve whole leaf orthodox and premium CTC cuts.',
     },
     {
-      q: 'How does WhatsApp ordering work?',
-      a: 'When you click "ORDER ON WHATSAPP", our system generates a unique order reference number (e.g. TN-2026-000001) with your chosen product details and quantity. It opens WhatsApp with a pre-filled confirmation message directly connected to our tea fulfillment manager for prompt confirmation and dispatch.',
+      q: 'How does the ordering process work?',
+      a: 'When you click "ORDER NOW", our system generates a unique order reference number (e.g. TN-2026-000001) with your chosen product details and quantity. It opens WhatsApp with a pre-filled confirmation message directly connected to our tea fulfillment manager for prompt confirmation and dispatch.',
     },
     {
       q: 'What is the shelf life of the 500g pouch?',

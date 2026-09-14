@@ -323,7 +323,7 @@ export const DeliveryAddressModal: React.FC<DeliveryAddressModalProps> = ({
                   className="w-1/2 sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-[#25D366] hover:bg-[#1EBE5D] text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg disabled:opacity-50"
                 >
                   <MessageSquare className="w-4 h-4" />
-                  <span>{loading ? 'Processing...' : 'Confirm & Order via WhatsApp'}</span>
+                  <span>{loading ? 'Processing...' : 'Confirm & Order Now'}</span>
                 </button>
               </div>
             </div>

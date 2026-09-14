@@ -126,7 +126,7 @@ export const ShopPage: React.FC = () => {
                     {isSingleProductMode ? (
                       <>
                         <MessageSquare className="w-3.5 h-3.5" />
-                        <span>Order on WhatsApp</span>
+                        <span>Order Now</span>
                       </>
                     ) : (
                       <>

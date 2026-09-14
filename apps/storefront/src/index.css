@@ -5,6 +5,16 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
+    max-width: 100%;
+  }
+  body {
+    overflow-x: clip;
+    max-width: 100%;
+  }
+  #root {
+    overflow-x: clip;
+    max-width: 100%;
   }
 }
 
@@ -12,6 +22,7 @@
 .text-gold-gradient {
   background: linear-gradient(135deg, #dfc07b 0%, #c5a059 50%, #ebd6a4 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

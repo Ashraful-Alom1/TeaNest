@@ -49,7 +49,7 @@ export const HomePage: React.FC = () => {
       title: 'Assam Black Tea 500g',
       subheading: 'Rich • Refreshing • Aromatic with Deep Golden Liquor & Natural Malt Notes',
       image: '/images/hero_slide_1.jpg',
-      ctaText: 'ORDER ON WHATSAPP',
+      ctaText: 'ORDER NOW',
       secondaryText: 'Explore Tea Details',
       badge: 'Pure Single-Estate Harvest',
     },
@@ -59,7 +59,7 @@ export const HomePage: React.FC = () => {
       title: 'Golden Liquor Kadak Chai',
       subheading: 'Freshly Steeping Rich Amber Cups with Intense Aroma and Brisk Full-Bodied Notes',
       image: '/images/hero_slide_2.jpg',
-      ctaText: 'ORDER ON WHATSAPP',
+      ctaText: 'ORDER NOW',
       secondaryText: 'Discover Chai Blends',
       badge: '100% Pure Tested Quality',
     },
@@ -69,7 +69,7 @@ export const HomePage: React.FC = () => {
       title: 'Direct Garden Freshness',
       subheading: 'Tender Clonal Tea Shoots with Morning Dew Preserved in Aroma-Lock Stand-Up Foil Pouch',
       image: '/images/hero_slide_3.jpg',
-      ctaText: 'ORDER ON WHATSAPP',
+      ctaText: 'ORDER NOW',
       secondaryText: 'Shop All Collections',
       badge: 'Assam High-Brisk Vintage',
     },
@@ -289,20 +289,20 @@ export const HomePage: React.FC = () => {
             <div className="w-20 h-0.5 bg-[#c5a059] mx-auto mt-3" />
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {/* Tile 1: Black Teas */}
             <Link
               to="/product/assam-black-tea"
-              className="group flex flex-col items-center text-center p-4 rounded-xl hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#c5a059]/30"
+              className="group flex flex-col items-center text-center p-3 sm:p-4 rounded-xl hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#c5a059]/30"
             >
-              <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-full overflow-hidden mb-4 border-2 border-[#1b3b27]/20 group-hover:border-[#c5a059] transition-colors">
+              <div className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 rounded-full overflow-hidden mb-3 sm:mb-4 border-2 border-[#1b3b27]/20 group-hover:border-[#c5a059] transition-colors">
                 <img
                   src="/images/tea_nest_front.jpg"
                   alt="Black Teas"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#1b3b27] group-hover:text-[#c5a059] transition-colors">
+              <h3 className="font-serif font-bold text-base sm:text-lg text-[#1b3b27] group-hover:text-[#c5a059] transition-colors">
                 Black Teas
               </h3>
               <p className="text-xs text-[#708075] mt-1">126 products</p>
@@ -311,12 +311,12 @@ export const HomePage: React.FC = () => {
             {/* Tile 2: Green Teas */}
             <Link
               to="/shop?category=green-tea"
-              className="group flex flex-col items-center text-center p-4 rounded-xl hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#c5a059]/30"
+              className="group flex flex-col items-center text-center p-3 sm:p-4 rounded-xl hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#c5a059]/30"
             >
-              <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-full overflow-hidden mb-4 border-2 border-[#1b3b27]/20 group-hover:border-[#c5a059] transition-colors bg-[#f4f7f4] flex items-center justify-center">
-                <Leaf className="w-16 h-16 text-[#257342] group-hover:scale-110 transition-transform duration-500" />
+              <div className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 rounded-full overflow-hidden mb-3 sm:mb-4 border-2 border-[#1b3b27]/20 group-hover:border-[#c5a059] transition-colors bg-[#f4f7f4] flex items-center justify-center">
+                <Leaf className="w-12 h-12 sm:w-16 sm:h-16 text-[#257342] group-hover:scale-110 transition-transform duration-500" />
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#1b3b27] group-hover:text-[#c5a059] transition-colors">
+              <h3 className="font-serif font-bold text-base sm:text-lg text-[#1b3b27] group-hover:text-[#c5a059] transition-colors">
                 Green Teas
               </h3>
               <p className="text-xs text-[#708075] mt-1">42 products</p>
@@ -325,12 +325,12 @@ export const HomePage: React.FC = () => {
             {/* Tile 3: White Teas */}
             <Link
               to="/shop?category=white-tea"
-              className="group flex flex-col items-center text-center p-4 rounded-xl hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#c5a059]/30"
+              className="group flex flex-col items-center text-center p-3 sm:p-4 rounded-xl hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#c5a059]/30"
             >
-              <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-full overflow-hidden mb-4 border-2 border-[#1b3b27]/20 group-hover:border-[#c5a059] transition-colors bg-[#fdfaf5] flex items-center justify-center">
-                <Sparkles className="w-16 h-16 text-[#c5a059] group-hover:scale-110 transition-transform duration-500" />
+              <div className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 rounded-full overflow-hidden mb-3 sm:mb-4 border-2 border-[#1b3b27]/20 group-hover:border-[#c5a059] transition-colors bg-[#fdfaf5] flex items-center justify-center">
+                <Sparkles className="w-12 h-12 sm:w-16 sm:h-16 text-[#c5a059] group-hover:scale-110 transition-transform duration-500" />
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#1b3b27] group-hover:text-[#c5a059] transition-colors">
+              <h3 className="font-serif font-bold text-base sm:text-lg text-[#1b3b27] group-hover:text-[#c5a059] transition-colors">
                 White Teas
               </h3>
               <p className="text-xs text-[#708075] mt-1">10 products</p>
@@ -339,12 +339,12 @@ export const HomePage: React.FC = () => {
             {/* Tile 4: Oolong Teas */}
             <Link
               to="/shop?category=oolong-tea"
-              className="group flex flex-col items-center text-center p-4 rounded-xl hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#c5a059]/30"
+              className="group flex flex-col items-center text-center p-3 sm:p-4 rounded-xl hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#c5a059]/30"
             >
-              <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-full overflow-hidden mb-4 border-2 border-[#1b3b27]/20 group-hover:border-[#c5a059] transition-colors bg-[#f5f2eb] flex items-center justify-center">
-                <Award className="w-16 h-16 text-[#927238] group-hover:scale-110 transition-transform duration-500" />
+              <div className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 rounded-full overflow-hidden mb-3 sm:mb-4 border-2 border-[#1b3b27]/20 group-hover:border-[#c5a059] transition-colors bg-[#f5f2eb] flex items-center justify-center">
+                <Award className="w-12 h-12 sm:w-16 sm:h-16 text-[#927238] group-hover:scale-110 transition-transform duration-500" />
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#1b3b27] group-hover:text-[#c5a059] transition-colors">
+              <h3 className="font-serif font-bold text-base sm:text-lg text-[#1b3b27] group-hover:text-[#c5a059] transition-colors">
                 Oolong Teas
               </h3>
               <p className="text-xs text-[#708075] mt-1">2 products</p>
@@ -498,7 +498,7 @@ export const HomePage: React.FC = () => {
                   className="w-full flex items-center justify-center gap-2 bg-[#257342] hover:bg-[#1e6136] text-white py-2.5 rounded text-xs font-bold tracking-wider uppercase transition-all shadow-md"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>Order on WhatsApp</span>
+                  <span>Order Now</span>
                 </button>
               </div>
             </div>
@@ -541,7 +541,7 @@ export const HomePage: React.FC = () => {
                   className="w-full flex items-center justify-center gap-2 bg-[#1b3b27] hover:bg-[#254631] text-white py-2.5 rounded text-xs font-bold tracking-wider uppercase transition-all"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>Order on WhatsApp</span>
+                  <span>Order Now</span>
                 </button>
               </div>
             </div>
@@ -584,7 +584,7 @@ export const HomePage: React.FC = () => {
                   className="w-full flex items-center justify-center gap-2 bg-[#1b3b27] hover:bg-[#254631] text-white py-2.5 rounded text-xs font-bold tracking-wider uppercase transition-all"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>Order on WhatsApp</span>
+                  <span>Order Now</span>
                 </button>
               </div>
             </div>
@@ -627,7 +627,7 @@ export const HomePage: React.FC = () => {
                   className="w-full flex items-center justify-center gap-2 bg-[#1b3b27] hover:bg-[#254631] text-white py-2.5 rounded text-xs font-bold tracking-wider uppercase transition-all"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>Order on WhatsApp</span>
+                  <span>Order Now</span>
                 </button>
               </div>
             </div>
@@ -799,18 +799,18 @@ export const HomePage: React.FC = () => {
             <span className="text-xs font-bold text-[#66776b]">from 600+ verified reviews</span>
           </div>
 
-          <div className="relative bg-white border border-[#e8ded0] p-8 sm:p-10 rounded-2xl shadow-sm min-h-[200px] flex flex-col justify-center">
+          <div className="relative bg-white border border-[#e8ded0] px-7 py-8 sm:px-14 sm:py-10 rounded-2xl shadow-sm min-h-[220px] flex flex-col justify-center">
             <div className="flex justify-center text-[#c5a059] mb-3">
               {[...Array(reviews[currentReviewIndex].rating)].map((_, i) => (
                 <Star key={i} className="w-4 h-4 fill-current" />
               ))}
             </div>
 
-            <h3 className="font-serif font-bold text-lg text-[#1b3b27] mb-2">
+            <h3 className="font-serif font-bold text-base sm:text-lg text-[#1b3b27] mb-2 px-2 sm:px-0">
               "{reviews[currentReviewIndex].title}"
             </h3>
 
-            <p className="text-sm text-[#4d5c52] italic leading-relaxed max-w-2xl mx-auto">
+            <p className="text-xs sm:text-sm text-[#4d5c52] italic leading-relaxed max-w-2xl mx-auto px-1 sm:px-0">
               "{reviews[currentReviewIndex].text}"
             </p>
 
@@ -826,18 +826,18 @@ export const HomePage: React.FC = () => {
               onClick={() =>
                 setCurrentReviewIndex((prev) => (prev === 0 ? reviews.length - 1 : prev - 1))
               }
-              className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full text-[#8e9c91] hover:text-[#1b3b27] transition-colors"
+              className="absolute left-1.5 sm:left-3 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 rounded-full text-[#8e9c91] hover:text-[#1b3b27] bg-white/90 sm:bg-transparent shadow-xs sm:shadow-none border border-[#e8ded0]/80 sm:border-0 transition-colors"
               aria-label="Previous Review"
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
 
             <button
               onClick={() => setCurrentReviewIndex((prev) => (prev + 1) % reviews.length)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full text-[#8e9c91] hover:text-[#1b3b27] transition-colors"
+              className="absolute right-1.5 sm:right-3 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 rounded-full text-[#8e9c91] hover:text-[#1b3b27] bg-white/90 sm:bg-transparent shadow-xs sm:shadow-none border border-[#e8ded0]/80 sm:border-0 transition-colors"
               aria-label="Next Review"
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
         </div>

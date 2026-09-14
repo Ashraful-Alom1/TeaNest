@@ -215,7 +215,7 @@ export const ProductDetailPage: React.FC = () => {
                 {isSingleProductMode ? (
                   <>
                     <MessageSquare className="w-5 h-5" />
-                    <span>ORDER ON WHATSAPP ({formatCurrency(product.sellingPrice * quantity, false)})</span>
+                    <span>ORDER NOW ({formatCurrency(product.sellingPrice * quantity, false)})</span>
                   </>
                 ) : (
                   <>

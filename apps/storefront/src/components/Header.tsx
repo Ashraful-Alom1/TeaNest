@@ -49,17 +49,17 @@ export const Header: React.FC = () => {
           <div className="flex items-center justify-between h-16 gap-4">
 
             {/* 1. Brand Logo + Name — far left */}
-            <Link to="/" className="flex items-center gap-2.5 group shrink-0">
+            <Link to="/" className="flex items-center gap-2 group shrink min-w-0">
               <img
-                src="/images/tea_nest_logo.svg"
+                src="/images/tea_nest_emblem.svg"
                 alt="Tea Nest Logo"
-                className="h-8 w-auto transition-transform group-hover:scale-105"
+                className="h-8 w-8 sm:h-9 sm:w-9 transition-transform group-hover:scale-105 shrink-0"
               />
-              <div className="flex flex-col text-left leading-none">
-                <span className="font-serif text-[22px] tracking-[0.14em] font-bold text-[#f5f2e9] group-hover:text-[#c5a059] transition-colors leading-none">
+              <div className="flex flex-col text-left leading-none min-w-0">
+                <span className="font-serif text-[18px] sm:text-[22px] tracking-[0.12em] sm:tracking-[0.14em] font-bold text-[#f5f2e9] group-hover:text-[#c5a059] transition-colors leading-none truncate">
                   TEA NEST
                 </span>
-                <span className="text-[7.5px] tracking-[0.22em] uppercase text-[#c5a059] font-medium mt-[3px]">
+                <span className="text-[6.5px] sm:text-[7.5px] tracking-[0.18em] sm:tracking-[0.22em] uppercase text-[#c5a059] font-medium mt-[3px] truncate">
                   BORN IN ASSAM • LOVED EVERYWHERE
                 </span>
               </div>
@@ -91,17 +91,17 @@ export const Header: React.FC = () => {
               ))}
             </nav>
 
-            {/* 4. Right Icons: Wishlist, Cart, Account */}
-            <div className="flex items-center gap-3 shrink-0">
+            {/* 4. Right Icons: Wishlist, Cart, Account, Menu */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               {/* Wishlist */}
-              <Link to="/shop" className="text-[#c8bfad] hover:text-[#c5a059] transition-colors" title="Wishlist">
+              <Link to="/shop" className="p-1 text-[#c8bfad] hover:text-[#c5a059] transition-colors" title="Wishlist">
                 <Heart className="w-[18px] h-[18px]" />
               </Link>
 
               {/* Cart */}
               <Link
                 to="/cart"
-                className="flex items-center gap-1 text-[#c8bfad] hover:text-[#c5a059] transition-colors"
+                className="flex items-center gap-1 p-1 text-[#c8bfad] hover:text-[#c5a059] transition-colors"
                 title="Shopping Bag"
               >
                 <ShoppingBag className="w-[18px] h-[18px]" />
@@ -113,10 +113,10 @@ export const Header: React.FC = () => {
                 <div className="relative">
                   <button
                     onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                    className="flex items-center gap-1.5 text-[11px] text-[#f5f2e9] bg-[#1a2e21] border border-[#c5a059]/40 py-1 px-3 rounded-full hover:border-[#c5a059] transition-all"
+                    className="flex items-center gap-1 text-[11px] text-[#f5f2e9] bg-[#1a2e21] border border-[#c5a059]/40 py-1 px-2 sm:px-3 rounded-full hover:border-[#c5a059] transition-all"
                   >
-                    <User className="w-3 h-3 text-[#c5a059]" />
-                    <span className="max-w-[70px] truncate">{customer.name.split(' ')[0]}</span>
+                    <User className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-[#c5a059]" />
+                    <span className="hidden sm:inline max-w-[70px] truncate">{customer.name.split(' ')[0]}</span>
                     <ChevronDown className="w-2.5 h-2.5 text-[#c5a059]" />
                   </button>
 
@@ -158,9 +158,10 @@ export const Header: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setAuthModalOpen(true)}
-                  className="flex items-center gap-1.5 text-[11px] text-[#c5a059] border border-[#c5a059]/40 bg-[#c5a059]/10 hover:bg-[#c5a059]/20 px-3 py-1 rounded-full font-medium transition-all"
+                  className="flex items-center gap-1 text-[11px] text-[#c5a059] border border-[#c5a059]/40 bg-[#c5a059]/10 hover:bg-[#c5a059]/20 px-2 sm:px-3 py-1 rounded-full font-medium transition-all"
+                  title="Sign In"
                 >
-                  <User className="w-3 h-3" />
+                  <User className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                   <span className="hidden sm:inline">Sign In</span>
                 </button>
               )}
