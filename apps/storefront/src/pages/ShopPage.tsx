@@ -6,6 +6,94 @@ import { AuthModal } from '../components/AuthModal';
 import { DeliveryAddressModal } from '../components/DeliveryAddressModal';
 import { Product } from '@tea-nest/types';
 
+interface ShopProductCardProps {
+  product: Product;
+  isSingleProductMode: boolean;
+  onAction: (product: Product) => void;
+}
+
+const ShopProductCard: React.FC<ShopProductCardProps> = ({
+  product,
+  isSingleProductMode,
+  onAction,
+}) => {
+  const frontUrl = product.thumbnail?.secureUrl || '/images/tea_nest_front.jpg';
+
+  return (
+    <div className="bg-white rounded-2xl border border-cream-300 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
+      {/* Image Container - Seamless fit with warm cream background */}
+      <div className="relative bg-[#f5f2eb] flex items-center justify-center overflow-hidden aspect-[4/5]">
+        <Link
+          to={`/product/${product.slug}`}
+          className="w-full h-full flex items-center justify-center cursor-pointer"
+        >
+          <img
+            src={frontUrl}
+            alt={product.name}
+            className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500"
+          />
+        </Link>
+
+        {/* Top Origin Badge */}
+        <span className="absolute top-3 left-3 bg-[#1b3b27]/90 text-[#e8dbb5] border border-[#c5a059]/30 text-xs px-2.5 py-1 rounded-full font-semibold shadow-md backdrop-blur-xs pointer-events-none">
+          {product.weight}{product.unit} Pouch
+        </span>
+      </div>
+
+      {/* Details */}
+      <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+        <div className="space-y-2">
+          <div className="text-xs font-semibold text-gold-600 uppercase tracking-widest">
+            {product.categoryName || 'Black Tea'}
+          </div>
+          <Link
+            to={`/product/${product.slug}`}
+            className="font-serif text-xl font-bold text-charcoal-950 hover:text-forest-700 transition-colors block"
+          >
+            {product.name}
+          </Link>
+          <p className="text-xs text-charcoal-600 line-clamp-2 leading-relaxed">
+            {product.description}
+          </p>
+        </div>
+
+        <div className="pt-4 border-t border-cream-200 flex items-center justify-between">
+          <div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-xl font-bold price-font text-forest-800 tabular-nums tracking-tight">
+                {formatCurrency(product.sellingPrice, false)}
+              </span>
+              {product.mrp > product.sellingPrice && (
+                <span className="text-xs text-charcoal-400 line-through price-font">
+                  {formatCurrency(product.mrp, false)}
+                </span>
+              )}
+            </div>
+            <span className="text-[10px] text-charcoal-500">Incl. of 5% GST</span>
+          </div>
+
+          <button
+            onClick={() => onAction(product)}
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-forest-800 hover:bg-forest-900 text-gold-300 font-semibold text-xs tracking-wider uppercase rounded-xl transition-all shadow"
+          >
+            {isSingleProductMode ? (
+              <>
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>Order Now</span>
+              </>
+            ) : (
+              <>
+                <ShoppingBag className="w-3.5 h-3.5" />
+                <span>Add To Cart</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const ShopPage: React.FC = () => {
   const { state, store } = useTeaNestStore();
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -65,79 +153,12 @@ export const ShopPage: React.FC = () => {
           }`}
         >
           {publishedProducts.map((product) => (
-            <div
+            <ShopProductCard
               key={product.id}
-              className="bg-white rounded-2xl border border-cream-300 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group"
-            >
-              {/* Image Container - Seamless fit with warm cream background and zero black borders */}
-              <Link
-                to={`/product/${product.slug}`}
-                className="relative bg-[#f5f2eb] flex items-center justify-center overflow-hidden aspect-[4/5]"
-              >
-                <img
-                  src={product.thumbnail?.secureUrl || '/images/tea_nest_front.jpg'}
-                  alt={product.name}
-                  className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500"
-                />
-                <span className="absolute top-4 left-4 bg-[#1b3b27]/90 text-[#e8dbb5] border border-[#c5a059]/30 text-xs px-2.5 py-1 rounded-full font-semibold shadow-md backdrop-blur-xs">
-                  {product.weight}{product.unit} Pouch
-                </span>
-                <span className="absolute top-4 right-4 bg-[#1b3b27]/90 text-[#e8dbb5] text-xs px-2.5 py-1 rounded-full border border-[#c5a059]/30 shadow-md backdrop-blur-xs">
-                  Assam Origin
-                </span>
-              </Link>
-
-              {/* Details */}
-              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <div className="text-xs font-semibold text-gold-600 uppercase tracking-widest">
-                    {product.categoryName || 'Black Tea'}
-                  </div>
-                  <Link
-                    to={`/product/${product.slug}`}
-                    className="font-serif text-xl font-bold text-charcoal-950 hover:text-forest-700 transition-colors block"
-                  >
-                    {product.name}
-                  </Link>
-                  <p className="text-xs text-charcoal-600 line-clamp-2 leading-relaxed">
-                    {product.description}
-                  </p>
-                </div>
-
-                <div className="pt-4 border-t border-cream-200 flex items-center justify-between">
-                  <div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-xl font-bold text-forest-800">
-                        {formatCurrency(product.sellingPrice, false)}
-                      </span>
-                      {product.mrp > product.sellingPrice && (
-                        <span className="text-xs text-charcoal-400 line-through">
-                          {formatCurrency(product.mrp, false)}
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-[10px] text-charcoal-500">Incl. of 5% GST</span>
-                  </div>
-
-                  <button
-                    onClick={() => handleAction(product)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-forest-800 hover:bg-forest-900 text-gold-300 font-semibold text-xs tracking-wider uppercase rounded-xl transition-all shadow"
-                  >
-                    {isSingleProductMode ? (
-                      <>
-                        <MessageSquare className="w-3.5 h-3.5" />
-                        <span>Order Now</span>
-                      </>
-                    ) : (
-                      <>
-                        <ShoppingBag className="w-3.5 h-3.5" />
-                        <span>Add To Cart</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
+              product={product}
+              isSingleProductMode={isSingleProductMode}
+              onAction={handleAction}
+            />
           ))}
         </div>
 

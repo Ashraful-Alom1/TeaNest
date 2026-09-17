@@ -19,6 +19,16 @@
 }
 
 /* Custom gold shimmer gradient text */
+.font-editorial {
+  font-family: 'Playfair Display', Georgia, Cambria, 'Times New Roman', Times, serif !important;
+}
+
+/* Universally clear, globally readable currency and price font with proper tabular lining figures */
+.price-font {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+  font-feature-settings: 'tnum' on, 'lnum' on;
+}
+
 .text-gold-gradient {
   background: linear-gradient(135deg, #dfc07b 0%, #c5a059 50%, #ebd6a4 100%);
   -webkit-background-clip: text;

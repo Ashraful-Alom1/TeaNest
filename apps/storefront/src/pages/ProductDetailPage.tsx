@@ -117,6 +117,7 @@ export const ProductDetailPage: React.FC = () => {
               />
             </div>
 
+
             {/* Thumbnail Selectors */}
             <div className="flex gap-3">
               {galleryImages.map((img, idx) => (
@@ -125,7 +126,7 @@ export const ProductDetailPage: React.FC = () => {
                   onClick={() => setActiveImageIdx(idx)}
                   className={`w-20 h-24 rounded-xl overflow-hidden border-2 transition-all bg-[#f5f2eb] ${
                     activeImageIdx === idx
-                      ? 'border-[#c5a059] shadow-md scale-105'
+                      ? 'border-[#c5a059] shadow-md scale-105 ring-2 ring-[#c5a059]/40'
                       : 'border-[#e2d9cc] opacity-70 hover:opacity-100'
                   }`}
                 >

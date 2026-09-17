@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles,
   Star,
@@ -13,11 +12,129 @@ import {
   Clock,
   ArrowRight,
   Flame,
+  ShieldCheck,
 } from 'lucide-react';
 import { useTeaNestStore } from '@tea-nest/shared';
 import { AuthModal } from '../components/AuthModal';
 import { DeliveryAddressModal } from '../components/DeliveryAddressModal';
 import { Product, getBlogCoverImageUrl } from '@tea-nest/types';
+
+interface BestSellerCardProps {
+  badge: string;
+  badgeBg: string;
+  title: string;
+  subtitle: string;
+  price: string;
+  mrp: string;
+  onOrder: () => void;
+  image?: string;
+  slug?: string;
+}
+
+const BestSellerCard: React.FC<BestSellerCardProps> = ({
+  badge,
+  badgeBg,
+  title,
+  subtitle,
+  price,
+  mrp,
+  onOrder,
+  image = '/images/tea_nest_front.jpg',
+  slug = 'assam-black-tea',
+}) => {
+  const productUrl = `/product/${slug}`;
+
+  return (
+    <div className="bg-[#fdfaf5] border border-[#e8dece] rounded-xl p-5 flex flex-col justify-between hover:shadow-xl transition-all duration-300 group">
+      <div className="space-y-3">
+        {/* Clickable Image -> Redirects directly to Product Detail Page */}
+        <Link
+          to={productUrl}
+          className="relative block w-full aspect-[4/5] rounded-lg overflow-hidden bg-white border border-[#ece3d3] p-3 cursor-pointer group/img"
+        >
+          <span className={`absolute top-2 left-2 ${badgeBg} text-white text-[10px] font-bold px-2 py-0.5 rounded z-10 shadow-sm pointer-events-none`}>
+            {badge}
+          </span>
+
+          <img
+            src={image}
+            alt={title}
+            className="w-full h-full object-contain group-hover/img:scale-105 transition-transform duration-300"
+          />
+        </Link>
+
+        <div className="space-y-1">
+          <div className="flex text-[#c5a059]">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className="w-3.5 h-3.5 fill-current" />
+            ))}
+          </div>
+          <Link
+            to={productUrl}
+            className="font-serif font-bold text-base text-[#1b3b27] group-hover:text-[#c5a059] transition-colors block"
+          >
+            {title}
+          </Link>
+          <p className="text-xs text-[#738278]">{subtitle}</p>
+        </div>
+      </div>
+
+      <div className="pt-4 border-t border-[#eee5d6] mt-4 space-y-3">
+        <div className="flex items-baseline justify-between">
+          <span className="text-2xl font-bold price-font text-[#1b3b27] tabular-nums tracking-tight">{price}</span>
+          <span className="text-xs text-[#6e7d72] font-semibold price-font">{mrp}</span>
+        </div>
+
+        <button
+          onClick={onOrder}
+          className="w-full flex items-center justify-center gap-2 bg-[#257342] hover:bg-[#1e6136] text-white py-2.5 rounded text-xs font-bold tracking-wider uppercase transition-all shadow-md active:scale-95 cursor-pointer"
+        >
+          <Send className="w-3.5 h-3.5" />
+          <span>Order Now</span>
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const GiftCard: React.FC<{
+  title: string;
+  subtitle: string;
+  price: string;
+  image?: string;
+  slug?: string;
+}> = ({
+  title,
+  subtitle,
+  price,
+  image = '/images/tea_nest_front.jpg',
+  slug = 'assam-black-tea',
+}) => {
+  const productUrl = `/product/${slug}`;
+
+  return (
+    <div className="bg-[#fcfaf7] border border-[#e8dece] rounded-xl p-4 space-y-3 hover:shadow-lg transition-all group">
+      <Link
+        to={productUrl}
+        className="relative block aspect-square bg-white rounded-lg overflow-hidden border border-[#ede4d7] p-3 cursor-pointer group-hover:shadow-sm"
+      >
+        <img
+          src={image}
+          alt={title}
+          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+        />
+      </Link>
+      <Link
+        to={productUrl}
+        className="font-serif font-bold text-sm text-[#1b3b27] group-hover:text-[#c5a059] transition-colors block"
+      >
+        {title}
+      </Link>
+      <p className="text-[11px] text-[#738278]">{subtitle}</p>
+      <p className="price-font font-bold text-[#c5a059] text-base tabular-nums">{price}</p>
+    </div>
+  );
+};
 
 export const HomePage: React.FC = () => {
   const { state } = useTeaNestStore();
@@ -29,8 +146,9 @@ export const HomePage: React.FC = () => {
     whatsappUrl: string;
   } | null>(null);
 
-  // Hero Slider State
-  const [currentSlide, setCurrentSlide] = useState(0);
+  // Hero Slider State (Infinite Seamless Loop)
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(true);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSuccess, setNewsletterSuccess] = useState(false);
 
@@ -45,43 +163,158 @@ export const HomePage: React.FC = () => {
   const heroSlides = [
     {
       id: 1,
-      tag: 'Born in Assam • Loved Everywhere',
-      title: 'Assam Black Tea 500g',
-      subheading: 'Rich • Refreshing • Aromatic with Deep Golden Liquor & Natural Malt Notes',
-      image: '/images/hero_slide_1.jpg',
+      tag: 'BORN IN ASSAM • LOVED EVERYWHERE',
+      preTitle: 'FROM THE',
+      title: 'Tea Gardens of',
+      titleHighlight: 'Naharkatia',
+      postTitle: 'TO YOUR DOORSTEP',
+      subheading: '100% Pure Single-Estate Assam CTC Black Tea • Rich, Malty & Freshly Packed at Source',
+      image: '/images/tea_estate_hero_clean.jpg',
       ctaText: 'ORDER NOW',
       secondaryText: 'Explore Tea Details',
-      badge: 'Pure Single-Estate Harvest',
+      badge: 'Single-Estate Harvest',
+      trust1: '100% Single-Estate Naharkatia',
+      trust2: 'Handpicked Clonal Leaves',
     },
     {
       id: 2,
-      tag: 'Artisanal Brewing • Pure Heritage',
-      title: 'Golden Liquor Kadak Chai',
-      subheading: 'Freshly Steeping Rich Amber Cups with Intense Aroma and Brisk Full-Bodied Notes',
-      image: '/images/hero_slide_2.jpg',
+      tag: 'GOLDEN DAWN HARVEST • SEED TO SIP',
+      preTitle: 'AWAKEN TO',
+      title: 'The Golden Sunrise of',
+      titleHighlight: 'Upper Assam',
+      postTitle: 'FRESH FIRST FLUSH',
+      subheading: 'Tender Morning Dew Buds Hand-Plucked at First Light • Brisk Amber Cups with Intoxicating Malty Aroma',
+      image: '/images/tea_estate_dawn.jpg',
       ctaText: 'ORDER NOW',
-      secondaryText: 'Discover Chai Blends',
-      badge: '100% Pure Tested Quality',
+      secondaryText: 'Discover The Harvest',
+      badge: 'Dawn Clonal Vintage',
+      trust1: 'Dawn Dew Plucking',
+      trust2: '100% Pure Chemical-Free',
     },
     {
       id: 3,
-      tag: 'Dawn Harvest 2026 • Naharkatia',
-      title: 'Direct Garden Freshness',
-      subheading: 'Tender Clonal Tea Shoots with Morning Dew Preserved in Aroma-Lock Stand-Up Foil Pouch',
-      image: '/images/hero_slide_3.jpg',
+      tag: 'HIMALAYAN FOOTHILLS • NATURAL ELEVATION',
+      preTitle: 'NURTURED IN',
+      title: 'Mist-Shrouded Slopes of',
+      titleHighlight: 'High Terroir',
+      postTitle: 'HIGH-BRISK ROYAL CHAI',
+      subheading: 'Steep Velvety Amber Cups with Deep Golden Rims & An Unmistakable Caramel Malt Sweetness',
+      image: '/images/tea_estate_hills_golden.jpg',
       ctaText: 'ORDER NOW',
-      secondaryText: 'Shop All Collections',
-      badge: 'Assam High-Brisk Vintage',
+      secondaryText: 'View Tasting Notes',
+      badge: 'High Elevation Terroir',
+      trust1: 'High-Brisk Amber Liquor',
+      trust2: 'Full-Bodied Golden Rim',
+    },
+    {
+      id: 4,
+      tag: 'ORGANIC PURITY • TRADITIONAL CRAFT',
+      preTitle: 'HERITAGE OF',
+      title: 'Lush Emerald Valleys of',
+      titleHighlight: 'Brahmaputra',
+      postTitle: 'MASTER BLENDER RESERVE',
+      subheading: 'Crafted from Selected First & Second Flush Bush Clones for the Ultimate Kadak Morning Cup',
+      image: '/images/tea_estate_valley_morning.jpg',
+      ctaText: 'ORDER NOW',
+      secondaryText: 'Shop All Blends',
+      badge: 'Estate Master Batch',
+      trust1: 'Traditional Artisanal CTC',
+      trust2: 'Uncompromised Kadak Flavour',
+    },
+    {
+      id: 5,
+      tag: 'PREMIUM AROMA-LOCK PACKAGING • FRESH DELIVERED',
+      preTitle: 'SEALED IN',
+      title: 'Multi-Layer Foil for',
+      titleHighlight: 'Peak Freshness',
+      postTitle: 'LUXURY TEA EXPERIENCE',
+      subheading: 'Zip-Sealed at the Plantation to Lock In Volatile Essential Oils & Farm-Fresh Fragrance',
+      image: '/images/tea_estate_golden_crest.jpg',
+      ctaText: 'ORDER NOW',
+      secondaryText: 'Explore Collection',
+      badge: 'Aroma-Lock Guarantee',
+      trust1: 'Zip-Lock Oxygen Barrier',
+      trust2: 'Fast Express Doorstep Delivery',
     },
   ];
 
-  // Auto-advance hero slides smoothly every 5.5 seconds
+  // Extended array with cloned boundary slides for seamless infinite loop (no rewind)
+  const extendedSlides = [
+    { ...heroSlides[heroSlides.length - 1], id: 'clone-prev' },
+    ...heroSlides,
+    { ...heroSlides[0], id: 'clone-next' },
+  ];
+
+  const handleTransitionEnd = () => {
+    if (currentSlideIndex === extendedSlides.length - 1) {
+      // Reached the clone of Slide 1 -> silently snap to real Slide 1 without animation
+      setIsTransitioning(false);
+      setCurrentSlideIndex(1);
+    } else if (currentSlideIndex === 0) {
+      // Reached the clone of Slide 5 -> silently snap to real Slide 5 without animation
+      setIsTransitioning(false);
+      setCurrentSlideIndex(heroSlides.length);
+    }
+  };
+
+  const nextSlide = () => {
+    setIsTransitioning(true);
+    setCurrentSlideIndex((prev) => prev + 1);
+  };
+
+  const prevSlide = () => {
+    setIsTransitioning(true);
+    setCurrentSlideIndex((prev) => prev - 1);
+  };
+
+  const goToSlide = (slideIdx: number) => {
+    setIsTransitioning(true);
+    setCurrentSlideIndex(slideIdx + 1);
+  };
+
+  // Active indicator dot index (0 to 4)
+  const activeDotIndex =
+    currentSlideIndex === 0
+      ? heroSlides.length - 1
+      : currentSlideIndex === extendedSlides.length - 1
+      ? 0
+      : currentSlideIndex - 1;
+
+  // Preload all hero slide images into browser cache so transitions are instantaneous
+  useEffect(() => {
+    heroSlides.forEach((slide) => {
+      const img = new Image();
+      img.src = slide.image;
+    });
+  }, [heroSlides]);
+
+  // Auto-advance hero slides smoothly every 4 seconds in an infinite loop
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5500);
+      setIsTransitioning(true);
+      setCurrentSlideIndex((prev) => prev + 1);
+    }, 4000);
     return () => clearInterval(timer);
-  }, [heroSlides.length]);
+  }, [currentSlideIndex]);
+
+  // Touch swipe support for mobile
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (diff > 45) {
+      nextSlide();
+    } else if (diff < -45) {
+      prevSlide();
+    }
+    setTouchStartX(null);
+  };
 
   const handleWhatsAppOrder = (product = primaryProduct) => {
     const targetProduct = product || primaryProduct;
@@ -131,149 +364,199 @@ export const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#fcfaf7] text-[#121513] font-sans selection:bg-[#c5a059] selection:text-white">
       {/* ======================================================== */}
-      {/* 1. HERO SLIDER CAROUSEL (Matching PDF Page 15 & 3)        */}
+      {/* 1. HERO SLIDER CAROUSEL (ZERO BLINK • SMOOTH LUXURY CROSSFADE) */}
       {/* ======================================================== */}
-      {/* ======================================================== */}
-      {/* 1. HERO SLIDER CAROUSEL (WITH SMOOTH RIGHT-TO-LEFT PAN)   */}
-      {/* ======================================================== */}
-      {/* ======================================================== */}
-      {/* 1. HERO SLIDER CAROUSEL (WITH SMOOTH RIGHT-TO-LEFT PAN)   */}
-      {/* ======================================================== */}
-      <section className="relative w-full h-[580px] sm:h-[620px] lg:h-[680px] overflow-hidden bg-[#0d1711] select-none">
-        <AnimatePresence initial={false} mode="popLayout">
-          <motion.div
-            key={currentSlide}
-            initial={{ x: '100%', opacity: 0.2 }}
-            animate={{ x: '0%', opacity: 1 }}
-            exit={{ x: '-100%', opacity: 0 }}
-            transition={{
-              x: { duration: 1.0, ease: [0.22, 1, 0.36, 1] },
-              opacity: { duration: 0.7 },
-            }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.18}
-            onDragEnd={(_, info) => {
-              if (info.offset.x < -45 || info.velocity.x < -300) {
-                setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-              } else if (info.offset.x > 45 || info.velocity.x > 300) {
-                setCurrentSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1));
-              }
-            }}
-            className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
-          >
-            {/* Background Image with Continuous Smooth Right-to-Left Pan */}
-            <div className="absolute inset-0 overflow-hidden">
-              <motion.img
-                src={heroSlides[currentSlide].image}
-                alt={heroSlides[currentSlide].title}
-                initial={{ x: '6%', scale: 1.12 }}
-                animate={{ x: '-6%', scale: 1.12 }}
-                transition={{ duration: 6, ease: 'linear' }}
-                className="w-full h-full object-cover object-center pointer-events-none"
+      <section
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        className="relative w-full min-h-[660px] sm:min-h-[680px] md:min-h-0 md:h-[620px] lg:h-[680px] xl:h-[720px] overflow-hidden bg-[#0d1711] select-none"
+      >
+        {/* Full-bleed Sliding Track: The COMPLETE slide (Background + Transparent overlay + Text + Products) glides sequentially in an infinite loop */}
+        <div
+          className={`flex w-full h-full ${
+            isTransitioning ? 'transition-transform duration-700 ease-out' : ''
+          }`}
+          style={{ transform: `translateX(-${currentSlideIndex * 100}%)` }}
+          onTransitionEnd={handleTransitionEnd}
+        >
+          {extendedSlides.map((slide) => (
+            <div
+              key={slide.id}
+              className="relative w-full h-full shrink-0 min-h-[660px] sm:min-h-[680px] md:min-h-0 md:h-[620px] lg:h-[680px] xl:h-[720px] overflow-hidden"
+            >
+              {/* 100% Realistic Estate Background Image */}
+              <img
+                src={slide.image}
+                alt={slide.title}
+                className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
+                loading="eager"
               />
-            </div>
-            
-            {/* Rich Responsive Gradients for High Readability on Mobile & Desktop */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0d1711] via-black/75 to-black/35 sm:bg-gradient-to-r sm:from-black/90 sm:via-black/60 sm:to-black/20 pointer-events-none" />
-            <div className="absolute inset-0 bg-black/20 sm:bg-transparent pointer-events-none" />
 
-            {/* Slide Content */}
-            <div className="absolute inset-0 w-full h-full flex items-center z-10 pointer-events-none">
-              <div className="max-w-7xl mx-auto w-full px-6 sm:px-14 lg:px-20 pointer-events-auto">
-                <div className="max-w-2xl space-y-4 sm:space-y-5 text-left text-white">
-                  <div className="inline-flex items-center gap-2 bg-[#257342]/90 border border-[#4ade80]/40 px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold tracking-wider text-[#d1fae5] uppercase shadow-md backdrop-blur-xs">
-                    <Sparkles className="w-3.5 h-3.5 text-[#fde047] shrink-0" />
-                    <span>{heroSlides[currentSlide].badge}</span>
-                  </div>
+              {/* Transparent Dark Gradient Overlays (Vivid Scenery + High Legibility) */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20 md:to-transparent pointer-events-none z-10" />
+              <div className="absolute bottom-0 inset-x-0 h-28 sm:h-36 md:h-44 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none z-10" />
 
-                  <div className="space-y-1 sm:space-y-1.5">
-                    <p className="font-serif italic text-[#e8dbb5] text-lg sm:text-2xl tracking-wide">
-                      {heroSlides[currentSlide].tag}
-                    </p>
-                    <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
-                      {heroSlides[currentSlide].title}
-                    </h1>
-                  </div>
+              {/* Slide Content: Text Left, Product Trio Right */}
+              <div className="absolute inset-0 w-full h-full flex items-center z-20 pointer-events-none pt-8 sm:pt-10 md:pt-0 pb-6 md:pb-0">
+                <div className="max-w-7xl mx-auto w-full px-5 sm:px-10 lg:px-16 pointer-events-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 lg:gap-12 items-end">
+                    
+                    {/* Left Column: Brand Typography & CTAs (Clean, NO EXTRA BORDER) */}
+                    <div className="md:col-span-6 lg:col-span-7 pb-3 md:pb-16 min-h-[360px] sm:min-h-[420px] md:min-h-0 flex flex-col justify-end">
+                      <div className="space-y-2 sm:space-y-3.5 lg:space-y-4 text-left text-white">
+                        {/* Luxury Tagline Badge */}
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md text-[#fcd34d] text-[10px] sm:text-xs font-bold tracking-widest uppercase shadow-sm">
+                          <Sparkles className="w-3 h-3 text-[#fbbf24] shrink-0" />
+                          <span>{slide.tag}</span>
+                        </div>
 
-                  <p className="text-[#e2dac9] text-xs sm:text-base lg:text-lg font-light leading-relaxed max-w-xl line-clamp-3 sm:line-clamp-none">
-                    {heroSlides[currentSlide].subheading}
-                  </p>
+                        {/* Eyebrow / Pre-title */}
+                        <p className="font-sans font-extrabold tracking-[0.24em] text-white/95 text-[11px] sm:text-sm lg:text-base uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
+                          {slide.preTitle}
+                        </p>
 
-                  {/* Pricing & In-stock badge */}
-                  <div className="flex flex-wrap items-center gap-3 sm:gap-4 py-1">
-                    <span className="text-2xl sm:text-3xl font-bold font-serif text-[#c5a059]">
-                      ₹450
-                    </span>
-                    <span className="text-xs sm:text-sm text-[#a3b3a7] line-through">MRP ₹499</span>
-                    <span className="bg-[#257342] text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded shadow-sm">
-                      Save 10%
-                    </span>
-                    <span className="text-xs text-[#4ade80] flex items-center gap-1.5 font-medium ml-1">
-                      <span className="w-2 h-2 rounded-full bg-[#4ade80] animate-pulse shrink-0" />
-                      In Stock ({primaryProduct.stockQuantity} units)
-                    </span>
-                  </div>
+                        {/* Editorial Serif Headline */}
+                        <h1 className="font-editorial font-bold text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-white leading-[1.06] tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.85)]">
+                          {slide.title}<br />
+                          <span className="text-[#f5eedc] drop-shadow-[0_4px_20px_rgba(0,0,0,0.85)]">{slide.titleHighlight}</span>
+                        </h1>
 
-                  {/* Mobile-friendly CTAs: Full-width stacked on mobile, row on tablet/desktop */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2 w-full sm:w-auto">
-                    <button
-                      onClick={() => handleWhatsAppOrder(primaryProduct)}
-                      className="flex items-center justify-center gap-2.5 bg-[#257342] hover:bg-[#1e6136] text-white px-7 py-3.5 rounded-sm font-semibold tracking-wider text-sm transition-all shadow-xl hover:scale-105 active:scale-95"
-                    >
-                      <Send className="w-4 h-4 text-[#d1fae5]" />
-                      <span>{heroSlides[currentSlide].ctaText}</span>
-                    </button>
+                        {/* Post-title uppercase */}
+                        <p className="font-sans font-extrabold tracking-[0.22em] text-white/95 text-xs sm:text-base lg:text-xl uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] pt-0.5">
+                          {slide.postTitle}
+                        </p>
 
-                    <Link
-                      to="/product/assam-black-tea"
-                      className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 px-6 py-3.5 rounded-sm font-semibold tracking-wider text-sm transition-all"
-                    >
-                      <span>{heroSlides[currentSlide].secondaryText}</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
+                        {/* Subtitle / Tasting Notes */}
+                        <p className="text-[#f1f5f9] text-xs sm:text-sm lg:text-base font-normal leading-relaxed max-w-lg drop-shadow-md line-clamp-2 sm:line-clamp-none">
+                          {slide.subheading}
+                        </p>
+
+                        {/* Price & In-Stock pill */}
+                        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-0.5">
+                          <span className="text-2xl sm:text-3xl font-extrabold price-font text-white tabular-nums tracking-tight drop-shadow-md">
+                            ₹450
+                          </span>
+                          <span className="text-xs sm:text-sm text-[#cbd5e1] line-through drop-shadow-sm price-font font-medium">
+                            MRP ₹499
+                          </span>
+                          <span className="bg-[#257342] text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded shadow-md">
+                            Save 10%
+                          </span>
+                          <span className="text-xs text-[#86efac] flex items-center gap-1.5 font-semibold drop-shadow-md">
+                            <span className="w-2 h-2 rounded-full bg-[#4ade80] animate-pulse shrink-0" />
+                            In Stock ({primaryProduct.stockQuantity} units)
+                          </span>
+                        </div>
+
+                        {/* Primary CTA Buttons (Clean, borderless frosted styling) */}
+                        <div className="flex flex-row items-center gap-2.5 sm:gap-3 pt-1 w-full sm:w-auto">
+                          <button
+                            onClick={() => handleWhatsAppOrder(primaryProduct)}
+                            className="flex items-center justify-center gap-2 bg-[#257342] hover:bg-[#1e6136] text-white px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-lg font-bold tracking-wider text-xs sm:text-sm transition-all shadow-xl hover:scale-105 active:scale-95 flex-1 sm:flex-initial cursor-pointer"
+                          >
+                            <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#d1fae5]" />
+                            <span>{slide.ctaText}</span>
+                          </button>
+
+                          <Link
+                            to="/product/assam-black-tea"
+                            className="flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-lg font-semibold tracking-wider text-xs sm:text-sm transition-all backdrop-blur-md hover:scale-105 active:scale-95 flex-1 sm:flex-initial shadow-lg"
+                          >
+                            <span>{slide.secondaryText}</span>
+                            <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          </Link>
+                        </div>
+
+                        {/* Trust badges */}
+                        <div className="hidden sm:flex items-center gap-6 pt-1 text-[11px] text-[#e2e8f0] font-medium drop-shadow-sm">
+                          <span className="flex items-center gap-1.5">
+                            <ShieldCheck className="w-4 h-4 text-[#fbbf24] shrink-0" /> {slide.trust1}
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <Leaf className="w-4 h-4 text-[#4ade80] shrink-0" /> {slide.trust2}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right Column: Standing Product Lineup on the bottom shelf */}
+                    <div className="md:col-span-6 lg:col-span-5 flex items-end justify-center md:justify-end relative pb-1 md:pb-4 pointer-events-auto">
+                      <Link
+                        to="/product/assam-black-tea"
+                        className="group relative flex flex-col items-center justify-end cursor-pointer transition-transform duration-500 hover:scale-[1.03] active:scale-98"
+                        title="Shop Tea Nest Premium Tea Collection"
+                      >
+                        <img
+                          src="/images/tea_nest_trio_standing_clean.png"
+                          alt="Tea Nest Premium Tea Trio Collection - Assam Black Tea, Green Tea & Darjeeling Tea"
+                          className="max-h-[220px] sm:max-h-[300px] md:max-h-[400px] lg:max-h-[470px] xl:max-h-[510px] w-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.55)] relative z-10"
+                        />
+                        {/* Soft Realistic Contact Shadow resting on the floor shelf */}
+                        <div className="w-[92%] h-5 bg-black/45 blur-md rounded-full mx-auto -mt-2.5 pointer-events-none" />
+                      </Link>
+                    </div>
+
                   </div>
                 </div>
               </div>
             </div>
-          </motion.div>
-        </AnimatePresence>
+          ))}
+        </div>
 
-        {/* Slider Controls (Hidden on narrow mobile screens to avoid obscuring text, available on tablet/desktop) */}
+        {/* Desktop Slider Side Controls (Strictly hidden on mobile, only on sm and above) */}
         <button
-          onClick={() =>
-            setCurrentSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1))
-          }
-          className="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-[#c5a059] text-white items-center justify-center transition-all border border-white/20 hover:scale-105 active:scale-95"
+          onClick={prevSlide}
+          className="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/45 hover:bg-[#c5a059] active:bg-[#c5a059] text-white items-center justify-center transition-all border border-white/20 hover:scale-105 active:scale-95 cursor-pointer shadow-lg backdrop-blur-xs"
           aria-label="Previous Slide"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
 
         <button
-          onClick={() => setCurrentSlide((prev) => (prev + 1) % heroSlides.length)}
-          className="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-[#c5a059] text-white items-center justify-center transition-all border border-white/20 hover:scale-105 active:scale-95"
+          onClick={nextSlide}
+          className="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/45 hover:bg-[#c5a059] active:bg-[#c5a059] text-white items-center justify-center transition-all border border-white/20 hover:scale-105 active:scale-95 cursor-pointer shadow-lg backdrop-blur-xs"
           aria-label="Next Slide"
         >
           <ChevronRight className="w-6 h-6" />
         </button>
 
-        {/* Slide Indicators with Touch-friendly hit target */}
-        <div className="absolute bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-2">
-          {heroSlides.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              className="p-1.5 focus:outline-none"
-              aria-label={`Go to slide ${idx + 1}`}
-            >
-              <span
-                className={`block h-2 transition-all rounded-full ${
-                  currentSlide === idx ? 'w-8 bg-[#c5a059]' : 'w-2.5 bg-white/40 hover:bg-white/70'
-                }`}
-              />
-            </button>
-          ))}
+        {/* Slide Indicators & Mobile Controls Pill */}
+        <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 sm:left-10 sm:translate-x-0 lg:left-16 z-30 flex items-center space-x-2 bg-black/45 sm:bg-transparent backdrop-blur-md sm:backdrop-blur-none px-3.5 py-1.5 sm:px-0 sm:py-0 rounded-full border border-white/20 sm:border-none shadow-lg">
+          {/* Mobile Prev Button */}
+          <button
+            onClick={prevSlide}
+            className="sm:hidden p-1 text-white/90 hover:text-[#c5a059] active:text-[#c5a059] transition-colors"
+            aria-label="Previous Slide"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          {/* Indicator Dots */}
+          <div className="flex items-center space-x-1.5 px-1">
+            {heroSlides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => goToSlide(idx)}
+                className="p-1 focus:outline-none cursor-pointer"
+                aria-label={`Go to slide ${idx + 1}`}
+              >
+                <span
+                  className={`block h-2 transition-all rounded-full ${
+                    activeDotIndex === idx ? 'w-7 bg-[#c5a059]' : 'w-2 bg-white/40 hover:bg-white/70'
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+
+          {/* Mobile Next Button */}
+          <button
+            onClick={nextSlide}
+            className="sm:hidden p-1 text-white/90 hover:text-[#c5a059] active:text-[#c5a059] transition-colors"
+            aria-label="Next Slide"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       </section>
 
@@ -360,74 +643,82 @@ export const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Banner 1: Tea of the Month */}
-            <div className="relative rounded-2xl overflow-hidden shadow-xl bg-gradient-to-r from-[#17281d] to-[#254631] text-white p-8 flex flex-col justify-between min-h-[300px]">
-              <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-85 pointer-events-none flex items-center justify-center p-2">
-                <img
-                  src="/images/tea_nest_front.jpg"
-                  alt="Tea Nest Assam Black Tea 500g"
-                  className="w-full h-full object-contain drop-shadow-2xl"
-                />
-              </div>
-
-              <div className="relative z-10 space-y-3">
-                <div className="inline-block bg-[#c5a059] text-[#121513] text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
-                  FLAT 30% OFF
+            <div className="relative rounded-2xl overflow-hidden shadow-xl bg-gradient-to-r from-[#17281d] via-[#1f3a28] to-[#254631] text-white p-6 sm:p-8 min-h-[300px]">
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+                {/* Left: Dedicated Text Content - Strictly Contained */}
+                <div className="sm:col-span-7 space-y-3 z-10">
+                  <div className="inline-block bg-[#c5a059] text-[#121513] text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                    FLAT 30% OFF
+                  </div>
+                  <h3 className="text-xs sm:text-sm font-bold tracking-widest text-[#d8e8dc] uppercase">
+                    TEA OF THE MONTH
+                  </h3>
+                  <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl font-extrabold text-white leading-tight">
+                    A SIP OF WELLNESS, EVERY DAY.
+                  </h2>
+                  <p className="text-xs text-[#b8cfbf] leading-relaxed">
+                    Single-estate rare clonal Assam leaves, handpicked at dawn and packaged directly at Naharkatia by Fortunate Ventures.
+                  </p>
+                  <div className="pt-2">
+                    <Link
+                      to="/product/assam-black-tea"
+                      className="inline-flex items-center gap-2 bg-[#c5a059] hover:bg-[#b08b47] text-[#121513] px-5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-all shadow-md hover:scale-105 active:scale-95"
+                    >
+                      <span>Explore Offer</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
                 </div>
-                <h3 className="text-sm font-semibold tracking-widest text-[#d8e8dc] uppercase">
-                  TEA OF THE MONTH
-                </h3>
-                <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-white">
-                  A SIP OF WELLNESS, EVERY DAY.
-                </h2>
-                <p className="text-xs text-[#b8cfbf] max-w-sm">
-                  Single-estate rare clonal Assam leaves, handpicked at dawn and packaged directly at Naharkatia by Fortunate Ventures.
-                </p>
-              </div>
 
-              <div className="relative z-10 pt-6">
-                <Link
-                  to="/product/assam-black-tea"
-                  className="inline-flex items-center gap-2 bg-[#c5a059] hover:bg-[#b08b47] text-[#121513] px-6 py-2.5 rounded-sm font-bold text-xs uppercase tracking-wider transition-all"
-                >
-                  <span>Explore Offer</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+                {/* Right: Dedicated Image Showcase (No Text Overlap) */}
+                <div className="sm:col-span-5 flex items-center justify-center p-2">
+                  <div className="relative w-full max-w-[180px] sm:max-w-[210px] aspect-[3/4] rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-black/20">
+                    <img
+                      src="/images/tea_nest_front.jpg"
+                      alt="Tea Nest Assam Black Tea 500g Front View"
+                      className="w-full h-full object-cover object-center drop-shadow-xl"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Banner 2: Premix & Chai Blends */}
-            <div className="relative rounded-2xl overflow-hidden shadow-xl bg-gradient-to-r from-[#2a2217] to-[#473b28] text-white p-8 flex flex-col justify-between min-h-[300px]">
-              <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-85 pointer-events-none flex items-center justify-center p-2">
-                <img
-                  src="/images/tea_nest_back.jpg"
-                  alt="Tea Nest Assam CTC Back"
-                  className="w-full h-full object-contain drop-shadow-2xl"
-                />
-              </div>
-
-              <div className="relative z-10 space-y-3">
-                <div className="inline-block bg-[#257342] text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
-                  ESTATE BLENDS
+            <div className="relative rounded-2xl overflow-hidden shadow-xl bg-gradient-to-r from-[#2a2217] via-[#382d1c] to-[#473b28] text-white p-6 sm:p-8 min-h-[300px]">
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+                <div className="sm:col-span-7 space-y-3 z-10">
+                  <div className="inline-block bg-[#257342] text-white text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                    ESTATE BLENDS
+                  </div>
+                  <h3 className="text-xs sm:text-sm font-bold tracking-widest text-[#ead9bf] uppercase">
+                    AUTHENTIC KADAK CHAI
+                  </h3>
+                  <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl font-extrabold text-white leading-tight">
+                    PURE FLAVOR. READY IN SECONDS.
+                  </h2>
+                  <p className="text-xs text-[#d6c7af] leading-relaxed">
+                    Hand-crushed elaichi, ginger, and robust CTC tea leaves for an authentic Indian chai experience.
+                  </p>
+                  <div className="pt-2">
+                    <Link
+                      to="/shop?category=chai"
+                      className="inline-flex items-center gap-2 bg-[#257342] hover:bg-[#1e6136] text-white px-5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-all shadow-md hover:scale-105 active:scale-95"
+                    >
+                      <span>Discover Chai</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
                 </div>
-                <h3 className="text-sm font-semibold tracking-widest text-[#ead9bf] uppercase">
-                  AUTHENTIC KADAK CHAI
-                </h3>
-                <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-white">
-                  PURE FLAVOR. READY IN SECONDS.
-                </h2>
-                <p className="text-xs text-[#d6c7af] max-w-sm">
-                  Hand-crushed elaichi, ginger, and robust CTC tea leaves for an authentic Indian chai experience.
-                </p>
-              </div>
 
-              <div className="relative z-10 pt-6">
-                <Link
-                  to="/shop?category=chai"
-                  className="inline-flex items-center gap-2 bg-[#257342] hover:bg-[#1e6136] text-white px-6 py-2.5 rounded-sm font-bold text-xs uppercase tracking-wider transition-all"
-                >
-                  <span>Discover Chai</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+                <div className="sm:col-span-5 flex items-center justify-center p-2">
+                  <div className="relative w-full max-w-[180px] sm:max-w-[210px] aspect-[3/4] rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-black/20">
+                    <img
+                      src="/images/tea_nest_front.jpg"
+                      alt="Tea Nest Kadak Chai Front View"
+                      className="w-full h-full object-cover object-center drop-shadow-xl"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -458,179 +749,42 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Card 1: Flagship Assam Black Tea (500g) */}
-            <div className="bg-[#fdfaf5] border border-[#e8dece] rounded-xl p-5 flex flex-col justify-between hover:shadow-xl transition-all duration-300 group">
-              <div className="space-y-3">
-                <div className="relative w-full aspect-[4/5] rounded-lg overflow-hidden bg-white border border-[#ece3d3] flex items-center justify-center p-3">
-                  <span className="absolute top-2 left-2 bg-[#257342] text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                    FLAGSHIP
-                  </span>
-                  <img
-                    src="/images/tea_nest_front.jpg"
-                    alt="Assam Black Tea 500g"
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex text-[#c5a059]">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                    ))}
-                  </div>
-                  <h3 className="font-serif font-bold text-base text-[#1b3b27] group-hover:text-[#c5a059] transition-colors">
-                    Assam Black Tea (500g)
-                  </h3>
-                  <p className="text-xs text-[#738278]">
-                    Rich • Refreshing • Aromatic Stand-up Pouch
-                  </p>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-[#eee5d6] mt-4 space-y-3">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-lg font-bold font-serif text-[#1b3b27]">₹450.00</span>
-                  <span className="text-xs text-[#8f9e93] line-through">MRP ₹499.00</span>
-                </div>
-
-                <button
-                  onClick={() => handleWhatsAppOrder(primaryProduct)}
-                  className="w-full flex items-center justify-center gap-2 bg-[#257342] hover:bg-[#1e6136] text-white py-2.5 rounded text-xs font-bold tracking-wider uppercase transition-all shadow-md"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Order Now</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Card 2: Premium CTC Kadak Chai */}
-            <div className="bg-[#fdfaf5] border border-[#e8dece] rounded-xl p-5 flex flex-col justify-between hover:shadow-xl transition-all duration-300 group">
-              <div className="space-y-3">
-                <div className="relative w-full aspect-[4/5] rounded-lg overflow-hidden bg-white border border-[#ece3d3] flex items-center justify-center p-3">
-                  <span className="absolute top-2 left-2 bg-[#c5a059] text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                    BESTSELLER
-                  </span>
-                  <img
-                    src="/images/tea_nest_back.jpg"
-                    alt="Premium CTC Kadak Chai"
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex text-[#c5a059]">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                    ))}
-                  </div>
-                  <h3 className="font-serif font-bold text-base text-[#1b3b27] group-hover:text-[#c5a059] transition-colors">
-                    Premium CTC Kadak Chai
-                  </h3>
-                  <p className="text-xs text-[#738278]">Granular brisk Assam leaf for morning milk tea</p>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-[#eee5d6] mt-4 space-y-3">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-lg font-bold font-serif text-[#1b3b27]">₹495.00</span>
-                  <span className="text-xs text-[#8f9e93]">MRP (500g)</span>
-                </div>
-
-                <button
-                  onClick={() => handleWhatsAppOrder(primaryProduct)}
-                  className="w-full flex items-center justify-center gap-2 bg-[#1b3b27] hover:bg-[#254631] text-white py-2.5 rounded text-xs font-bold tracking-wider uppercase transition-all"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Order Now</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Card 3: Ginger & Cardamom Masala Chai */}
-            <div className="bg-[#fdfaf5] border border-[#e8dece] rounded-xl p-5 flex flex-col justify-between hover:shadow-xl transition-all duration-300 group">
-              <div className="space-y-3">
-                <div className="relative w-full aspect-[4/5] rounded-lg overflow-hidden bg-white border border-[#ece3d3] flex items-center justify-center p-3">
-                  <span className="absolute top-2 left-2 bg-[#927238] text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                    SPICED
-                  </span>
-                  <img
-                    src="/images/tea_nest_front.jpg"
-                    alt="Tea Nest Ginger Masala CTC Chai"
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex text-[#c5a059]">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                    ))}
-                  </div>
-                  <h3 className="font-serif font-bold text-base text-[#1b3b27] group-hover:text-[#c5a059] transition-colors">
-                    Tea Nest Ginger Masala Chai
-                  </h3>
-                  <p className="text-xs text-[#738278]">Authentic Indian Spiced Tea with Real Ginger</p>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-[#eee5d6] mt-4 space-y-3">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-lg font-bold font-serif text-[#1b3b27]">₹475.00</span>
-                  <span className="text-xs text-[#8f9e93]">MRP (500g)</span>
-                </div>
-
-                <button
-                  onClick={() => handleWhatsAppOrder(primaryProduct)}
-                  className="w-full flex items-center justify-center gap-2 bg-[#1b3b27] hover:bg-[#254631] text-white py-2.5 rounded text-xs font-bold tracking-wider uppercase transition-all"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Order Now</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Card 4: Single-Garden Orthodox Whole Leaf */}
-            <div className="bg-[#fdfaf5] border border-[#e8dece] rounded-xl p-5 flex flex-col justify-between hover:shadow-xl transition-all duration-300 group">
-              <div className="space-y-3">
-                <div className="relative w-full aspect-[4/5] rounded-lg overflow-hidden bg-white border border-[#ece3d3] flex items-center justify-center p-3">
-                  <span className="absolute top-2 left-2 bg-[#257342] text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                    ORTHODOX
-                  </span>
-                  <img
-                    src="/images/tea_nest_back.jpg"
-                    alt="Tea Nest Orthodox Whole Leaf"
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex text-[#c5a059]">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                    ))}
-                  </div>
-                  <h3 className="font-serif font-bold text-base text-[#1b3b27] group-hover:text-[#c5a059] transition-colors">
-                    Tea Nest Orthodox Reserve
-                  </h3>
-                  <p className="text-xs text-[#738278]">Whole leaf Assam black tea with golden tips</p>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-[#eee5d6] mt-4 space-y-3">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-lg font-bold font-serif text-[#1b3b27]">₹550.00</span>
-                  <span className="text-xs text-[#8f9e93]">MRP (500g)</span>
-                </div>
-
-                <button
-                  onClick={() => handleWhatsAppOrder(primaryProduct)}
-                  className="w-full flex items-center justify-center gap-2 bg-[#1b3b27] hover:bg-[#254631] text-white py-2.5 rounded text-xs font-bold tracking-wider uppercase transition-all"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Order Now</span>
-                </button>
-              </div>
-            </div>
+            <BestSellerCard
+              badge="FLAGSHIP"
+              badgeBg="bg-[#257342]"
+              title="Assam Black Tea (500g)"
+              subtitle="Rich • Refreshing • Aromatic Stand-up Pouch"
+              price="₹450.00"
+              mrp="MRP ₹499.00"
+              onOrder={() => handleWhatsAppOrder(primaryProduct)}
+            />
+            <BestSellerCard
+              badge="BESTSELLER"
+              badgeBg="bg-[#c5a059]"
+              title="Premium CTC Kadak Chai"
+              subtitle="Granular brisk Assam leaf for morning milk tea"
+              price="₹495.00"
+              mrp="MRP (500g)"
+              onOrder={() => handleWhatsAppOrder(primaryProduct)}
+            />
+            <BestSellerCard
+              badge="SPICED"
+              badgeBg="bg-[#927238]"
+              title="Tea Nest Ginger Masala Chai"
+              subtitle="Authentic Indian Spiced Tea with Real Ginger"
+              price="₹475.00"
+              mrp="MRP (500g)"
+              onOrder={() => handleWhatsAppOrder(primaryProduct)}
+            />
+            <BestSellerCard
+              badge="ORTHODOX"
+              badgeBg="bg-[#257342]"
+              title="Tea Nest Orthodox Reserve"
+              subtitle="Whole leaf Assam black tea with golden tips"
+              price="₹550.00"
+              mrp="MRP (500g)"
+              onOrder={() => handleWhatsAppOrder(primaryProduct)}
+            />
           </div>
         </div>
       </section>
@@ -705,69 +859,26 @@ export const HomePage: React.FC = () => {
           <div className="w-20 h-0.5 bg-[#c5a059] mx-auto mt-3 mb-10" />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
-            {/* Gift 1: Chai Trail */}
-            <div className="bg-[#fcfaf7] border border-[#e8dece] rounded-xl p-4 space-y-3 hover:shadow-lg transition-all">
-              <div className="aspect-square bg-white rounded-lg overflow-hidden border border-[#ede4d7] flex items-center justify-center p-4">
-                <img
-                  src="/images/tea_nest_front.jpg"
-                  alt="Tea Nest Chai Trail Gift"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <h4 className="font-serif font-bold text-sm text-[#1b3b27]">
-                Tea Nest Heritage Tasting Box
-              </h4>
-              <p className="text-[11px] text-[#738278]">Assam Estate Blends (500g Stand-up Pouch)</p>
-              <p className="font-serif font-bold text-[#c5a059] text-sm">MRP ₹629.00</p>
-            </div>
-
-            {/* Gift 2: Instant Premix Box */}
-            <div className="bg-[#fcfaf7] border border-[#e8dece] rounded-xl p-4 space-y-3 hover:shadow-lg transition-all">
-              <div className="aspect-square bg-white rounded-lg overflow-hidden border border-[#ede4d7] flex items-center justify-center p-4">
-                <img
-                  src="/images/tea_nest_back.jpg"
-                  alt="Tea Nest Estate Gift Pouch"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <h4 className="font-serif font-bold text-sm text-[#1b3b27]">
-                Tea Nest Naharkatia Estate Pouch
-              </h4>
-              <p className="text-[11px] text-[#738278]">Pure Single-Origin • Freshness Zip Lock</p>
-              <p className="font-serif font-bold text-[#c5a059] text-sm">MRP ₹450.00</p>
-            </div>
-
-            {/* Gift 3: Chamomile & Rose Tin */}
-            <div className="bg-[#fcfaf7] border border-[#e8dece] rounded-xl p-4 space-y-3 hover:shadow-lg transition-all">
-              <div className="aspect-square bg-white rounded-lg overflow-hidden border border-[#ede4d7] flex items-center justify-center p-4">
-                <img
-                  src="/images/tea_nest_front.jpg"
-                  alt="Tea Nest Connoisseur Pouch"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <h4 className="font-serif font-bold text-sm text-[#1b3b27]">
-                Tea Nest Connoisseur Selection
-              </h4>
-              <p className="text-[11px] text-[#738278]">First Flush Orthodox Reserve (500g)</p>
-              <p className="font-serif font-bold text-[#c5a059] text-sm">MRP ₹695.00</p>
-            </div>
-
-            {/* Gift 4: Red Wine Tea Tin */}
-            <div className="bg-[#fcfaf7] border border-[#e8dece] rounded-xl p-4 space-y-3 hover:shadow-lg transition-all">
-              <div className="aspect-square bg-white rounded-lg overflow-hidden border border-[#ede4d7] flex items-center justify-center p-4">
-                <img
-                  src="/images/tea_nest_back.jpg"
-                  alt="Tea Nest Royal Festive Hamper"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <h4 className="font-serif font-bold text-sm text-[#1b3b27]">
-                Tea Nest Royal Festive Hamper
-              </h4>
-              <p className="text-[11px] text-[#738278]">Golden Liquor Tea with Brewing Infuser</p>
-              <p className="font-serif font-bold text-[#c5a059] text-sm">MRP ₹850.00</p>
-            </div>
+            <GiftCard
+              title="Tea Nest Heritage Tasting Box"
+              subtitle="Assam Estate Blends (500g Stand-up Pouch)"
+              price="MRP ₹629.00"
+            />
+            <GiftCard
+              title="Tea Nest Naharkatia Estate Pouch"
+              subtitle="Pure Single-Origin • Freshness Zip Lock"
+              price="MRP ₹450.00"
+            />
+            <GiftCard
+              title="Tea Nest Connoisseur Selection"
+              subtitle="First Flush Orthodox Reserve (500g)"
+              price="MRP ₹695.00"
+            />
+            <GiftCard
+              title="Tea Nest Royal Festive Hamper"
+              subtitle="Golden Liquor Tea with Brewing Infuser"
+              price="MRP ₹850.00"
+            />
           </div>
 
           <div className="mt-10">
@@ -1020,46 +1131,75 @@ export const HomePage: React.FC = () => {
             <p className="text-xs font-bold tracking-widest uppercase text-[#c5a059]">
               FOLLOW US ON
             </p>
-            <div className="flex items-center justify-center gap-3 text-xs font-bold">
+            <div className="flex items-center justify-center gap-3.5">
+              {/* Facebook */}
               <a
                 href="https://facebook.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-[#1e442c] hover:bg-[#c5a059] flex items-center justify-center transition-colors"
+                aria-label="Follow Tea Nest on Facebook"
+                title="Facebook"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1e442c] hover:bg-[#c5a059] text-[#e3ded2] hover:text-[#0c1811] flex items-center justify-center transition-all duration-300 shadow-md hover:scale-110 active:scale-95 cursor-pointer"
               >
-                f
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
               </a>
+
+              {/* X (Twitter) */}
               <a
                 href="https://twitter.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-[#1e442c] hover:bg-[#c5a059] flex items-center justify-center transition-colors"
+                aria-label="Follow Tea Nest on X"
+                title="X (formerly Twitter)"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1e442c] hover:bg-[#c5a059] text-[#e3ded2] hover:text-[#0c1811] flex items-center justify-center transition-all duration-300 shadow-md hover:scale-110 active:scale-95 cursor-pointer"
               >
-                𝕏
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 24.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
               </a>
+
+              {/* YouTube */}
               <a
                 href="https://youtube.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-[#1e442c] hover:bg-[#c5a059] flex items-center justify-center transition-colors"
+                aria-label="Follow Tea Nest on YouTube"
+                title="YouTube"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1e442c] hover:bg-[#c5a059] text-[#e3ded2] hover:text-[#0c1811] flex items-center justify-center transition-all duration-300 shadow-md hover:scale-110 active:scale-95 cursor-pointer"
               >
-                ▶
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
               </a>
+
+              {/* Instagram */}
               <a
                 href="https://instagram.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-[#1e442c] hover:bg-[#c5a059] flex items-center justify-center transition-colors"
+                aria-label="Follow Tea Nest on Instagram"
+                title="Instagram"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1e442c] hover:bg-[#c5a059] text-[#e3ded2] hover:text-[#0c1811] flex items-center justify-center transition-all duration-300 shadow-md hover:scale-110 active:scale-95 cursor-pointer"
               >
-                📷
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
               </a>
+
+              {/* LinkedIn */}
               <a
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-[#1e442c] hover:bg-[#c5a059] flex items-center justify-center transition-colors"
+                aria-label="Follow Tea Nest on LinkedIn"
+                title="LinkedIn"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1e442c] hover:bg-[#c5a059] text-[#e3ded2] hover:text-[#0c1811] flex items-center justify-center transition-all duration-300 shadow-md hover:scale-110 active:scale-95 cursor-pointer"
               >
-                in
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                </svg>
               </a>
             </div>
           </div>
@@ -1097,7 +1237,7 @@ export const HomePage: React.FC = () => {
               </div>
               <div className="flex justify-between">
                 <span>Total Payable:</span>
-                <span className="font-bold text-white">₹450 (Incl. 5% GST)</span>
+                <span className="font-bold price-font text-white">₹450 (Incl. 5% GST)</span>
               </div>
               <div className="flex justify-between">
                 <span>Delivery:</span>

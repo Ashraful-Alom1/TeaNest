@@ -47,7 +47,9 @@ export default {
         },
       },
       fontFamily: {
+        editorial: ['"Playfair Display"', 'Georgia', 'serif'],
         serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        display: ['Outfit', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
         cinzel: ['Cinzel', 'serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
