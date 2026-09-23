@@ -831,6 +831,25 @@ export class AppStore {
     firestoreSync.saveDocument('orders', orderId, result.order);
     firestoreSync.saveDocument('invoices', result.invoice.invoiceId, result.invoice);
     firestoreSync.saveDocument('sales', result.sale.saleId, result.sale);
+
+    // Save updated products with deducted stock to Firestore
+    for (const item of result.order.items) {
+      const prod = this.state.products.find((p) => p.id === item.productId);
+      if (prod) {
+        firestoreSync.saveDocument('products', prod.id, prod);
+      }
+    }
+
+    // Save generated inventory movements & alerts to Firestore
+    for (const mov of this.state.inventoryMovements) {
+      if (mov.referenceId === result.order.orderNumber) {
+        firestoreSync.saveDocument('inventoryMovements', mov.movementId, mov);
+      }
+    }
+    for (const alert of this.state.lowStockAlerts) {
+      firestoreSync.saveDocument('lowStockAlerts', alert.alertId, alert);
+    }
+
     this.notify();
     return result;
   }
@@ -843,6 +862,29 @@ export class AppStore {
     const result = await this.orderService.cancelOrder(orderId, admin);
     this.syncFromOrderService();
     firestoreSync.saveDocument('orders', orderId, result);
+
+    // Save replenished products to Firestore
+    for (const item of result.items) {
+      const prod = this.state.products.find((p) => p.id === item.productId);
+      if (prod) {
+        firestoreSync.saveDocument('products', prod.id, prod);
+      }
+    }
+
+    // Save return inventory movements & alerts to Firestore
+    for (const mov of this.state.inventoryMovements) {
+      if (mov.referenceId === result.orderNumber && mov.type === 'RETURN') {
+        firestoreSync.saveDocument('inventoryMovements', mov.movementId, mov);
+      }
+    }
+    for (const alert of this.state.lowStockAlerts) {
+      firestoreSync.saveDocument('lowStockAlerts', alert.alertId, alert);
+    }
+
+    if (result.saleId) {
+      firestoreSync.deleteDocument('sales', result.saleId);
+    }
+
     this.notify();
     return result;
   }
@@ -1088,6 +1130,13 @@ export class AppStore {
     purchase.updatedAt = new Date().toISOString();
 
     this.syncFromOrderService();
+    for (const item of purchase.items) {
+      const prod = this.state.products.find((p) => p.id === item.productId);
+      if (prod) {
+        firestoreSync.saveDocument('products', prod.id, prod);
+      }
+    }
+    firestoreSync.saveDocument('purchases', purchase.purchaseId, purchase);
     this.notify();
   }
 
