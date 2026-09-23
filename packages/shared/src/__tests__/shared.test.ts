@@ -14,6 +14,7 @@ import {
 import {
   generateWhatsAppOrderUrl,
 } from '../whatsapp';
+import { AppStore } from '../services/appStore';
 
 describe('Inventory Low-Stock Thresholds', () => {
   it('calculates 70% threshold of 100 correctly', () => {
@@ -104,3 +105,38 @@ describe('WhatsApp Order Link Generator', () => {
     expect(url).toContain('Assam%20Black%20Tea');
   });
 });
+
+describe('Inventory Stock Reconciliation Engine', () => {
+  it('reconciles product stock from movement history and creates low stock alerts', () => {
+    const store = new AppStore();
+    const state = store.getState();
+
+    // Simulate movement history for orthodox reserve (sold 66 units, remaining 34)
+    state.inventoryMovements.push({
+      movementId: 'mov_test_1',
+      productId: 'prod_tea_orthodox_reserve_500g',
+      productName: 'Tea Nest Orthodox Reserve',
+      type: 'SALE',
+      quantity: 66,
+      beforeQuantity: 100,
+      afterQuantity: 34,
+      referenceId: 'TN-2026-000002',
+      reason: 'Order confirmation',
+      createdBy: 'admin@teanest.in',
+      createdAt: new Date().toISOString(),
+    });
+
+    // Run reconciliation
+    store.reconcileStock();
+
+    const product = state.products.find((p: any) => p.id === 'prod_tea_orthodox_reserve_500g');
+    expect(product?.stockQuantity).toBe(34);
+
+    const alert = state.lowStockAlerts.find(
+      (a: any) => a.productId === 'prod_tea_orthodox_reserve_500g' && a.status === 'ACTIVE'
+    );
+    expect(alert).toBeDefined();
+    expect(alert?.currentStock).toBe(34);
+  });
+});
+

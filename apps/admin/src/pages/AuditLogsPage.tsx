@@ -11,8 +11,6 @@ import {
   User,
   ArrowRight,
   XCircle,
-  ChevronDown,
-  ChevronUp,
   RefreshCw,
   Database,
 } from 'lucide-react';
@@ -29,7 +27,6 @@ export const AuditLogsPage: React.FC = () => {
   const { state } = useTeaNestStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
-  const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
   const [firebaseLogs, setFirebaseLogs] = useState<AuditLog[]>([]);
   const [isLiveConnected, setIsLiveConnected] = useState<boolean>(false);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
@@ -163,10 +160,6 @@ export const AuditLogsPage: React.FC = () => {
     (l) => l.action.includes('PAYMENT') || (l.after && typeof l.after === 'object' && 'paymentStatus' in l.after)
   ).length;
   const orderLogsCount = logs.filter((l) => l.action.startsWith('ORDER_')).length;
-
-  const toggleExpand = (logId: string) => {
-    setExpandedLogId((prev) => (prev === logId ? null : logId));
-  };
 
   const renderActionBadge = (action: string) => {
     if (action.includes('PAYMENT')) {
@@ -543,91 +536,48 @@ export const AuditLogsPage: React.FC = () => {
                 <th className="p-4">Entity</th>
                 <th className="p-4">Entity ID</th>
                 <th className="p-4">Change Summary</th>
-                <th className="p-4 text-center">Payload</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-admin-border">
               {filteredLogs.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="p-8 text-center text-admin-muted">
+                  <td colSpan={7} className="p-8 text-center text-admin-muted">
                     <AlertCircle className="w-8 h-8 text-admin-muted mx-auto mb-2 opacity-50" />
                     <p className="font-medium text-sm text-gray-400">No matching audit logs found</p>
                     <p className="text-xs text-admin-muted mt-1">Try clearing your search query or selecting a different filter.</p>
                   </td>
                 </tr>
               ) : (
-                filteredLogs.map((log) => {
-                  const isExpanded = expandedLogId === log.logId;
-                  return (
-                    <React.Fragment key={log.logId}>
-                      <tr className={`hover:bg-admin-card/50 transition-colors ${isExpanded ? 'bg-admin-card/30' : ''}`}>
-                        <td className="p-4 text-admin-muted whitespace-nowrap">
-                          {formatDateTime(log.timestamp)}
-                        </td>
-                        <td className="p-4 font-medium text-gray-200">
-                          <div className="flex items-center gap-1.5">
-                            <User className="w-3.5 h-3.5 text-admin-muted shrink-0" />
-                            <span className="truncate max-w-[160px]">{log.actorEmail}</span>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-admin-card text-admin-gold border border-admin-border whitespace-nowrap">
-                            {log.actorRole}
-                          </span>
-                        </td>
-                        <td className="p-4 whitespace-nowrap">
-                          {renderActionBadge(log.action)}
-                        </td>
-                        <td className="p-4 text-admin-muted font-medium whitespace-nowrap">
-                          {log.entityType}
-                        </td>
-                        <td className="p-4">
-                          {renderEntityCell(log)}
-                        </td>
-                        <td className="p-4">
-                          {renderChangeSummary(log)}
-                        </td>
-                        <td className="p-4 text-center">
-                          <button
-                            onClick={() => toggleExpand(log.logId)}
-                            className="p-1.5 rounded-lg bg-admin-card hover:bg-admin-surface border border-admin-border text-admin-muted hover:text-gray-200 transition-colors"
-                            title="Inspect JSON Payload"
-                          >
-                            {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                          </button>
-                        </td>
-                      </tr>
-
-                      {/* Expandable Forensic Inspector */}
-                      {isExpanded && (
-                        <tr className="bg-admin-card/70 border-b border-admin-border">
-                          <td colSpan={8} className="p-4 pl-8">
-                            <div className="bg-stone-950 border border-admin-border rounded-xl p-4 text-[11px] font-mono text-gray-300 space-y-2">
-                              <div className="flex items-center justify-between text-admin-gold border-b border-admin-border/50 pb-2">
-                                <span className="font-bold">FORENSIC RECORD: {log.logId}</span>
-                                <span className="text-admin-muted">{log.timestamp}</span>
-                              </div>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                                <div>
-                                  <span className="text-amber-400 font-semibold block mb-1">State Before:</span>
-                                  <pre className="bg-stone-900/80 p-2.5 rounded-lg overflow-x-auto text-[10px] text-gray-300 border border-admin-border/40">
-                                    {log.before ? JSON.stringify(log.before, null, 2) : '(none)'}
-                                  </pre>
-                                </div>
-                                <div>
-                                  <span className="text-emerald-400 font-semibold block mb-1">State After:</span>
-                                  <pre className="bg-stone-900/80 p-2.5 rounded-lg overflow-x-auto text-[10px] text-gray-300 border border-admin-border/40">
-                                    {log.after ? JSON.stringify(log.after, null, 2) : '(none)'}
-                                  </pre>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
-                  );
-                })
+                filteredLogs.map((log) => (
+                  <tr key={log.logId} className="hover:bg-admin-card/50 transition-colors">
+                    <td className="p-4 text-admin-muted whitespace-nowrap">
+                      {formatDateTime(log.timestamp)}
+                    </td>
+                    <td className="p-4 font-medium text-gray-200">
+                      <div className="flex items-center gap-1.5">
+                        <User className="w-3.5 h-3.5 text-admin-muted shrink-0" />
+                        <span className="truncate max-w-[160px]">{log.actorEmail}</span>
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-admin-card text-admin-gold border border-admin-border whitespace-nowrap">
+                        {log.actorRole}
+                      </span>
+                    </td>
+                    <td className="p-4 whitespace-nowrap">
+                      {renderActionBadge(log.action)}
+                    </td>
+                    <td className="p-4 text-admin-muted font-medium whitespace-nowrap">
+                      {log.entityType}
+                    </td>
+                    <td className="p-4">
+                      {renderEntityCell(log)}
+                    </td>
+                    <td className="p-4">
+                      {renderChangeSummary(log)}
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>

@@ -293,15 +293,91 @@ export class AppStore {
             hasChanges = true;
           }
           if (hasChanges) {
+            this.reconcileStock();
             this.updateOrderServiceFromState();
-            this.saveToStorage();
-            this.listeners.forEach((l) => l());
+            this.notify();
           }
         });
       } catch (err) {
         console.warn('[AppStore] Firestore live listener setup:', err);
       }
     }
+
+    // Initial stock reconciliation against movement history
+    this.reconcileStock();
+  }
+
+  /**
+   * Authoritative inventory reconciliation: Ensures that each product's current stock
+   * precisely matches the latest recorded inventory movement (from confirmed orders, returns, or adjustments),
+   * and synchronizes low stock alerts.
+   */
+  public reconcileStock(): boolean {
+    let changed = false;
+    if (!this.state.inventoryMovements || this.state.inventoryMovements.length === 0) {
+      return false;
+    }
+
+    const movementsByProduct = new Map<string, InventoryMovement[]>();
+    for (const mov of this.state.inventoryMovements) {
+      if (!mov.productId) continue;
+      const list = movementsByProduct.get(mov.productId) || [];
+      list.push(mov);
+      movementsByProduct.set(mov.productId, list);
+    }
+
+    for (const [productId, movs] of movementsByProduct.entries()) {
+      movs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      const latestMov = movs[0];
+      if (latestMov && typeof latestMov.afterQuantity === 'number') {
+        const product = this.state.products.find((p) => p.id === productId);
+        if (product && product.stockQuantity !== latestMov.afterQuantity) {
+          product.stockQuantity = latestMov.afterQuantity;
+          product.updatedAt = new Date().toISOString();
+          const threshold = calculateLowStockThreshold(
+            product.stockReferenceQty,
+            product.lowStockPercent || 70
+          );
+          product.lowStockThresholdQty = threshold;
+          firestoreSync.saveDocument('products', product.id, product);
+          changed = true;
+        }
+      }
+    }
+
+    // Synchronize Low Stock Alerts
+    for (const product of this.state.products) {
+      const threshold =
+        product.lowStockThresholdQty ||
+        calculateLowStockThreshold(product.stockReferenceQty, product.lowStockPercent || 70);
+      const isLow = product.stockQuantity < threshold;
+      const existingAlert = this.state.lowStockAlerts.find(
+        (a) => a.productId === product.id && a.status === 'ACTIVE'
+      );
+
+      if (isLow && !existingAlert) {
+        const alertId = `alert_${product.id}_${Date.now()}`;
+        const newAlert: LowStockAlert = {
+          alertId,
+          productId: product.id,
+          productName: product.name,
+          currentStock: product.stockQuantity,
+          threshold,
+          status: 'ACTIVE',
+          createdAt: new Date().toISOString(),
+        };
+        this.state.lowStockAlerts.push(newAlert);
+        firestoreSync.saveDocument('lowStockAlerts', alertId, newAlert);
+        changed = true;
+      } else if (!isLow && existingAlert) {
+        existingAlert.status = 'RESOLVED';
+        existingAlert.resolvedAt = new Date().toISOString();
+        firestoreSync.saveDocument('lowStockAlerts', existingAlert.alertId, existingAlert);
+        changed = true;
+      }
+    }
+
+    return changed;
   }
 
   private createOrderService(): OrderService {
@@ -1508,6 +1584,7 @@ export class AppStore {
     this.state.crmTimeline = [...s.crmTimeline].sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
+    this.reconcileStock();
   }
 }
 
