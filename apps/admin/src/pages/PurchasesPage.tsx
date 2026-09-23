@@ -14,7 +14,9 @@ export const PurchasesPage: React.FC = () => {
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
-  const purchases = state.purchases;
+  const purchases = [...state.purchases].sort(
+    (a, b) => new Date(b.createdAt || b.purchaseDate).getTime() - new Date(a.createdAt || a.purchaseDate).getTime()
+  );
   const suppliers = state.suppliers;
   const products = state.products;
 

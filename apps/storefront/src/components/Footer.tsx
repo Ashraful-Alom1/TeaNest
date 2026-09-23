@@ -7,7 +7,6 @@ import {
   Gift,
   Award,
   ShieldCheck,
-  ExternalLink,
 } from 'lucide-react';
 import { useTeaNestStore } from '@tea-nest/shared';
 
@@ -284,15 +283,12 @@ export const Footer: React.FC = () => {
                   About Fortunate Ventures
                 </Link>
               </li>
-              <li className="pt-2 border-t border-[#c5a059]/15">
+              <li>
                 <a
-                  href="http://localhost:5174"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[#c5a059] hover:underline font-medium"
+                  href="/admin/"
+                  className="hover:text-[#f5f2e9] text-[#c5a059] font-semibold transition-colors flex items-center gap-1"
                 >
-                  <span>Staff & Admin ERP Portal</span>
-                  <ExternalLink className="w-3 h-3" />
+                  Admin ERP Console &rarr;
                 </a>
               </li>
             </ul>

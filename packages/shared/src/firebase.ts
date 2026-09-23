@@ -8,7 +8,46 @@ import {
   onAuthStateChanged,
   User as FirebaseUser
 } from 'firebase/auth';
-import { getFirestore, Firestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { 
+  getFirestore, 
+  Firestore, 
+  connectFirestoreEmulator,
+  runTransaction,
+  writeBatch,
+  doc,
+  collection,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  query,
+  where,
+  orderBy,
+  Timestamp,
+  Transaction,
+} from 'firebase/firestore';
+
+export {
+  runTransaction,
+  writeBatch,
+  doc,
+  collection,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  query,
+  where,
+  orderBy,
+  Timestamp,
+  Transaction,
+};
+
+import { getFunctions, Functions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
 
 export interface FirebaseConfig {
   apiKey: string;
@@ -39,17 +78,20 @@ export function getDefaultFirebaseConfig(): FirebaseConfig {
 let appInstance: FirebaseApp | null = null;
 let authInstance: Auth | null = null;
 let dbInstance: Firestore | null = null;
+let functionsInstance: Functions | null = null;
 
 export function initFirebase(customConfig?: Partial<FirebaseConfig>): {
   app: FirebaseApp;
   auth: Auth;
   db: Firestore;
+  functions: Functions;
 } {
   if (!appInstance) {
     const config = { ...getDefaultFirebaseConfig(), ...customConfig };
     appInstance = getApps().length === 0 ? initializeApp(config) : getApp();
     authInstance = getAuth(appInstance);
     dbInstance = getFirestore(appInstance);
+    functionsInstance = getFunctions(appInstance, 'asia-south1');
 
     const meta = import.meta as any;
     const env = typeof meta !== 'undefined' && meta.env ? meta.env : ({} as Record<string, string>);
@@ -57,6 +99,7 @@ export function initFirebase(customConfig?: Partial<FirebaseConfig>): {
       try {
         connectAuthEmulator(authInstance, 'http://localhost:9099', { disableWarnings: true });
         connectFirestoreEmulator(dbInstance, 'localhost', 8080);
+        connectFunctionsEmulator(functionsInstance, 'localhost', 5001);
       } catch {
         // Emulator already connected
       }
@@ -67,8 +110,11 @@ export function initFirebase(customConfig?: Partial<FirebaseConfig>): {
     app: appInstance,
     auth: authInstance!,
     db: dbInstance!,
+    functions: functionsInstance!,
   };
 }
+
+export { httpsCallable };
 
 /**
  * Authenticate Administrator with Firebase Auth

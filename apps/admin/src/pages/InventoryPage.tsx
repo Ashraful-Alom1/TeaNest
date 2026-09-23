@@ -12,7 +12,9 @@ export const InventoryPage: React.FC = () => {
   const [error, setError] = useState('');
 
   const products = state.products;
-  const movements = [...state.inventoryMovements].reverse();
+  const movements = [...state.inventoryMovements].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 
   const handleAdjust = (e: React.FormEvent) => {
     e.preventDefault();

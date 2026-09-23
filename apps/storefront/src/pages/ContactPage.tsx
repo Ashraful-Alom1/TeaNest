@@ -40,34 +40,40 @@ export const ContactPage: React.FC = () => {
           {/* Contact Details Card */}
           <div className="lg:col-span-5 bg-charcoal-950 text-cream-100 p-8 rounded-2xl border border-gold-500/30 shadow-xl space-y-6">
             <h3 className="font-serif text-2xl font-bold text-cream-50 pb-3 border-b border-charcoal-800">
-              Fortunate Ventures
+              {settings?.businessName || 'Tea Nest'}
             </h3>
             <p className="text-xs text-cream-400">
-              Official Packer & Marketer for Tea Nest Assam Black Tea.
+              Official Single-Estate Orthodox & CTC Tea from Naharkatia, Upper Assam.
             </p>
 
             <div className="space-y-4 text-sm text-cream-300">
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-cream-100">{settings.businessName}</p>
+                  <p className="font-semibold text-cream-100">{settings?.businessName || 'Tea Nest'}</p>
                   <p className="text-xs text-cream-400 mt-0.5">
-                    {settings.address}, {settings.city}, {settings.state} - {settings.pincode}
+                    {settings?.address || 'Naharkatia Tea Estate'}, {settings?.city || 'Dibrugarh'}, {settings?.state || 'Assam'} - {settings?.pincode || '786610'}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-gold-400 shrink-0" />
-                <a href={`mailto:${settings.email}`} className="hover:text-gold-300 text-xs">
-                  {settings.email}
+                <a href={`mailto:${settings?.email || 'care@teanest.in'}`} className="hover:text-gold-300 text-xs">
+                  {settings?.email || 'care@teanest.in'}
                 </a>
               </div>
 
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-gold-400 shrink-0" />
-                <a href={`https://wa.me/${settings.whatsappOrderNumber}`} className="hover:text-gold-300 text-xs">
-                  +{settings.whatsappOrderNumber}
+                <a
+                  href={`https://wa.me/${(settings?.whatsappOrderNumber || '918822308551').replace(/\D/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-gold-300 text-xs flex items-center gap-1.5"
+                >
+                  <span>{settings?.phone || '+91 88223 08551'}</span>
+                  <span className="text-[10px] bg-forest-700 text-[#4ade80] px-1.5 py-0.5 rounded font-medium">WhatsApp</span>
                 </a>
               </div>
             </div>

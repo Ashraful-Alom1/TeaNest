@@ -9,7 +9,7 @@ export const businessSettingsSchema = z.object({
   whatsappOrderNumber: z
     .string()
     .trim()
-    .regex(/^\d{10,13}$/, 'WhatsApp number must be 10 to 13 digits (e.g. 919876543210)'),
+    .regex(/^\d{10,13}$/, 'WhatsApp number must be 10 to 13 digits (e.g. 918822308551)'),
   address: z.string().trim().min(5),
   city: z.string().trim().min(2),
   state: z.string().trim().min(2),

@@ -80,7 +80,7 @@ describe('Formatters & Indian Rupee Words', () => {
 describe('WhatsApp Order Link Generator', () => {
   it('generates a valid wa.me link with encoded order intent', () => {
     const url = generateWhatsAppOrderUrl({
-      phoneNumber: '919876543210',
+      phoneNumber: '918822308551',
       orderNumber: 'TN-2026-000001',
       customerName: 'Rahul Sharma',
       customerMobile: '9876543210',
@@ -98,7 +98,7 @@ describe('WhatsApp Order Link Generator', () => {
       grandTotal: 450,
     });
 
-    expect(url).toContain('https://wa.me/919876543210');
+    expect(url).toContain('https://wa.me/918822308551');
     expect(url).toContain('TN-2026-000001');
     expect(url).toContain('Rahul%20Sharma');
     expect(url).toContain('Assam%20Black%20Tea');

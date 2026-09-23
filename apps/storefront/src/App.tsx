@@ -20,6 +20,17 @@ import { TermsPage } from './pages/TermsPage';
 import { BlogPage } from './pages/BlogPage';
 import { BlogPostDetailPage } from './pages/BlogPostDetailPage';
 
+const AdminRedirect: React.FC = () => {
+  React.useEffect(() => {
+    window.location.href = '/admin/';
+  }, []);
+  return (
+    <div className="flex items-center justify-center min-h-[60vh] text-[#c5a059]">
+      <p className="font-serif text-lg animate-pulse">Redirecting to Tea Nest Admin ERP Console...</p>
+    </div>
+  );
+};
+
 export const App: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen">
@@ -43,22 +54,14 @@ export const App: React.FC = () => {
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/terms" element={<TermsPage />} />
-          {/* Admin Gateway Route */}
+          {/* Admin Gateway Route: Hand off to admin console */}
+          <Route
+            path="/admin"
+            element={<AdminRedirect />}
+          />
           <Route
             path="/admin/*"
-            element={
-              <div className="min-h-[60vh] bg-[#121513] text-gray-100 flex items-center justify-center p-6">
-                <div className="text-center space-y-3">
-                  <div className="w-8 h-8 border-2 border-[#c5a059] border-t-transparent rounded-full animate-spin mx-auto" />
-                  <p className="text-sm font-serif text-[#f5f2e9]">Accessing Administrative Gateway...</p>
-                  <script
-                    dangerouslySetInnerHTML={{
-                      __html: "window.location.href = '/admin/';",
-                    }}
-                  />
-                </div>
-              </div>
-            }
+            element={<AdminRedirect />}
           />
           {/* Fallback route */}
           <Route path="*" element={<HomePage />} />

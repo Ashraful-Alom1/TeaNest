@@ -4,7 +4,7 @@ export interface BusinessSettings {
   logoUrl?: string;
   phone: string;
   email: string;
-  whatsappOrderNumber: string; // e.g. "919876543210" without symbols for wa.me
+  whatsappOrderNumber: string; // e.g. "918822308551" without symbols for wa.me
   address: string;
   city: string;
   state: string;

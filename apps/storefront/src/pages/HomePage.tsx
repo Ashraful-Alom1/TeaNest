@@ -9,12 +9,15 @@ import {
   Leaf,
   Award,
   CheckCircle,
+  CheckCircle2,
   Clock,
   ArrowRight,
   Flame,
   ShieldCheck,
+  Eye,
+  ShoppingBag,
 } from 'lucide-react';
-import { useTeaNestStore } from '@tea-nest/shared';
+import { useTeaNestStore, SEED_PRODUCT } from '@tea-nest/shared';
 import { AuthModal } from '../components/AuthModal';
 import { DeliveryAddressModal } from '../components/DeliveryAddressModal';
 import { Product, getBlogCoverImageUrl } from '@tea-nest/types';
@@ -27,6 +30,7 @@ interface BestSellerCardProps {
   price: string;
   mrp: string;
   onOrder: () => void;
+  onAddToCart?: () => void;
   image?: string;
   slug?: string;
 }
@@ -39,6 +43,7 @@ const BestSellerCard: React.FC<BestSellerCardProps> = ({
   price,
   mrp,
   onOrder,
+  onAddToCart,
   image = '/images/tea_nest_front.jpg',
   slug = 'assam-black-tea',
 }) => {
@@ -85,13 +90,34 @@ const BestSellerCard: React.FC<BestSellerCardProps> = ({
           <span className="text-xs text-[#6e7d72] font-semibold price-font">{mrp}</span>
         </div>
 
-        <button
-          onClick={onOrder}
-          className="w-full flex items-center justify-center gap-2 bg-[#257342] hover:bg-[#1e6136] text-white py-2.5 rounded text-xs font-bold tracking-wider uppercase transition-all shadow-md active:scale-95 cursor-pointer"
-        >
-          <Send className="w-3.5 h-3.5" />
-          <span>Order Now</span>
-        </button>
+        {/* Action Buttons: BUY NOW & ADD TO CART (Matching 2nd Reference Image) */}
+        <div className="grid grid-cols-2 gap-2 pt-1">
+          <button
+            onClick={onOrder}
+            className="w-full flex items-center justify-center gap-1.5 bg-[#1b3b27] hover:bg-[#257342] text-white py-2.5 px-2 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-all shadow-sm active:scale-95 cursor-pointer"
+          >
+            <span>BUY NOW</span>
+          </button>
+
+          <button
+            onClick={onAddToCart}
+            className="w-full flex items-center justify-center gap-1.5 bg-white hover:bg-[#f5eedc] text-[#1b3b27] border border-[#1b3b27]/30 hover:border-[#1b3b27] py-2.5 px-2 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-all shadow-sm active:scale-95 cursor-pointer"
+          >
+            <ShoppingBag className="w-3.5 h-3.5 text-[#1b3b27]" />
+            <span className="whitespace-nowrap">ADD TO CART</span>
+          </button>
+        </div>
+
+        {/* View Details Link (Matching 2nd Reference Image) */}
+        <div className="text-center pt-1">
+          <Link
+            to={productUrl}
+            className="inline-flex items-center justify-center gap-1.5 text-xs text-[#526458] hover:text-[#1b3b27] font-medium transition-colors cursor-pointer"
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>View Details</span>
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -137,7 +163,7 @@ const GiftCard: React.FC<{
 };
 
 export const HomePage: React.FC = () => {
-  const { state } = useTeaNestStore();
+  const { state, store } = useTeaNestStore();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [deliveryModalOpen, setDeliveryModalOpen] = useState(false);
   const [orderProduct, setOrderProduct] = useState<Product | null>(null);
@@ -145,6 +171,14 @@ export const HomePage: React.FC = () => {
     orderNumber: string;
     whatsappUrl: string;
   } | null>(null);
+  const [cartToast, setCartToast] = useState<{ show: boolean; title: string } | null>(null);
+
+  const handleAddToCart = (product: Product = primaryProduct) => {
+    const target = product || primaryProduct;
+    store.addToCart(target, 1);
+    setCartToast({ show: true, title: target.name });
+    setTimeout(() => setCartToast(null), 3500);
+  };
 
   // Hero Slider State (Infinite Seamless Loop)
   const [currentSlideIndex, setCurrentSlideIndex] = useState(1);
@@ -158,7 +192,8 @@ export const HomePage: React.FC = () => {
   const primaryProduct =
     state.products.find((p) => p.isPublished && p.isActive && p.isFeatured) ||
     state.products.find((p) => p.isPublished && p.isActive) ||
-    state.products[0];
+    state.products[0] ||
+    SEED_PRODUCT;
 
   const heroSlides = [
     {
@@ -444,7 +479,7 @@ export const HomePage: React.FC = () => {
                           </span>
                           <span className="text-xs text-[#86efac] flex items-center gap-1.5 font-semibold drop-shadow-md">
                             <span className="w-2 h-2 rounded-full bg-[#4ade80] animate-pulse shrink-0" />
-                            In Stock ({primaryProduct.stockQuantity} units)
+                            In Stock ({primaryProduct?.stockQuantity ?? 100} units)
                           </span>
                         </div>
 
@@ -749,42 +784,61 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <BestSellerCard
-              badge="FLAGSHIP"
-              badgeBg="bg-[#257342]"
-              title="Assam Black Tea (500g)"
-              subtitle="Rich • Refreshing • Aromatic Stand-up Pouch"
-              price="₹450.00"
-              mrp="MRP ₹499.00"
-              onOrder={() => handleWhatsAppOrder(primaryProduct)}
-            />
-            <BestSellerCard
-              badge="BESTSELLER"
-              badgeBg="bg-[#c5a059]"
-              title="Premium CTC Kadak Chai"
-              subtitle="Granular brisk Assam leaf for morning milk tea"
-              price="₹495.00"
-              mrp="MRP (500g)"
-              onOrder={() => handleWhatsAppOrder(primaryProduct)}
-            />
-            <BestSellerCard
-              badge="SPICED"
-              badgeBg="bg-[#927238]"
-              title="Tea Nest Ginger Masala Chai"
-              subtitle="Authentic Indian Spiced Tea with Real Ginger"
-              price="₹475.00"
-              mrp="MRP (500g)"
-              onOrder={() => handleWhatsAppOrder(primaryProduct)}
-            />
-            <BestSellerCard
-              badge="ORTHODOX"
-              badgeBg="bg-[#257342]"
-              title="Tea Nest Orthodox Reserve"
-              subtitle="Whole leaf Assam black tea with golden tips"
-              price="₹550.00"
-              mrp="MRP (500g)"
-              onOrder={() => handleWhatsAppOrder(primaryProduct)}
-            />
+            {(() => {
+              const p1 = state.products.find((p) => p.slug === 'assam-black-tea') || state.products[0] || primaryProduct;
+              const p2 = state.products.find((p) => p.slug === 'premium-ctc-kadak-chai') || state.products[1] || primaryProduct;
+              const p3 = state.products.find((p) => p.slug === 'ginger-masala-chai') || state.products[2] || primaryProduct;
+              const p4 = state.products.find((p) => p.slug === 'orthodox-reserve') || state.products[3] || primaryProduct;
+
+              return (
+                <>
+                  <BestSellerCard
+                    badge="FLAGSHIP"
+                    badgeBg="bg-[#257342]"
+                    title={p1.name}
+                    subtitle="Rich • Refreshing • Aromatic Stand-up Pouch"
+                    price={`₹${p1.sellingPrice}.00`}
+                    mrp={`MRP ₹${p1.mrp}.00`}
+                    slug={p1.slug}
+                    onOrder={() => handleWhatsAppOrder(p1)}
+                    onAddToCart={() => handleAddToCart(p1)}
+                  />
+                  <BestSellerCard
+                    badge="BESTSELLER"
+                    badgeBg="bg-[#c5a059]"
+                    title={p2.name}
+                    subtitle="Granular brisk Assam leaf for morning milk tea"
+                    price={`₹${p2.sellingPrice}.00`}
+                    mrp={`MRP ₹${p2.mrp}.00`}
+                    slug={p2.slug}
+                    onOrder={() => handleWhatsAppOrder(p2)}
+                    onAddToCart={() => handleAddToCart(p2)}
+                  />
+                  <BestSellerCard
+                    badge="SPICED"
+                    badgeBg="bg-[#927238]"
+                    title={p3.name}
+                    subtitle="Authentic Indian Spiced Tea with Real Ginger"
+                    price={`₹${p3.sellingPrice}.00`}
+                    mrp={`MRP ₹${p3.mrp}.00`}
+                    slug={p3.slug}
+                    onOrder={() => handleWhatsAppOrder(p3)}
+                    onAddToCart={() => handleAddToCart(p3)}
+                  />
+                  <BestSellerCard
+                    badge="ORTHODOX"
+                    badgeBg="bg-[#257342]"
+                    title={p4.name}
+                    subtitle="Whole leaf Assam black tea with golden tips"
+                    price={`₹${p4.sellingPrice}.00`}
+                    mrp={`MRP ₹${p4.mrp}.00`}
+                    slug={p4.slug}
+                    onOrder={() => handleWhatsAppOrder(p4)}
+                    onAddToCart={() => handleAddToCart(p4)}
+                  />
+                </>
+              );
+            })()}
           </div>
         </div>
       </section>
@@ -1290,6 +1344,23 @@ export const HomePage: React.FC = () => {
           });
         }}
       />
+
+      {/* Add To Cart Toast Notification */}
+      {cartToast && cartToast.show && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#1b3b27] text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-[#c5a059]/40 flex items-center gap-3 animate-fade-in">
+          <CheckCircle2 className="w-5 h-5 text-[#c5a059] shrink-0" />
+          <div className="text-xs">
+            <p className="font-bold text-white">Added to Cart!</p>
+            <p className="text-[#d0e0d5] text-[11px] truncate max-w-[200px]">{cartToast.title}</p>
+          </div>
+          <Link
+            to="/cart"
+            className="ml-2 bg-[#c5a059] hover:bg-[#b59049] text-[#121513] text-[11px] font-bold px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+          >
+            View Cart
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

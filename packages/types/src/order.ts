@@ -14,11 +14,13 @@ export type PaymentStatus = 'UNPAID' | 'PARTIAL' | 'PAID' | 'REFUNDED';
 export interface Address {
   fullName: string;
   mobile: string;
+  houseNo?: string;
   street: string;
+  area?: string;
+  landmark?: string;
   city: string;
   state: string;
   pincode: string;
-  landmark?: string;
 }
 
 export interface OrderItem {
@@ -67,8 +69,12 @@ export interface Order {
   createdAt: string;
   updatedAt: string;
   confirmedAt?: string;
+  processingAt?: string;
   shippedAt?: string;
   deliveredAt?: string;
   cancelledAt?: string;
   cancellationReason?: string;
+  courierName?: string;
+  trackingNumber?: string;
+  trackingUrl?: string;
 }

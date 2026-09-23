@@ -7,7 +7,9 @@ export const InvoicesPage: React.FC = () => {
   const { state } = useTeaNestStore();
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
 
-  const invoices = state.invoices;
+  const invoices = [...state.invoices].sort(
+    (a, b) => new Date(b.createdAt || b.invoiceDate).getTime() - new Date(a.createdAt || a.invoiceDate).getTime()
+  );
 
   return (
     <div className="space-y-6">

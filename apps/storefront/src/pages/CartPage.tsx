@@ -8,9 +8,11 @@ export const CartPage: React.FC = () => {
   const { state, store } = useTeaNestStore();
   const navigate = useNavigate();
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [street, setStreet] = useState(state.currentCustomer?.address || '');
+  const [houseNo, setHouseNo] = useState('');
+  const [streetArea, setStreetArea] = useState(state.currentCustomer?.address || '');
+  const [landmark, setLandmark] = useState('');
   const [city, setCity] = useState(state.currentCustomer?.city || '');
-  const [stateName, setStateName] = useState(state.currentCustomer?.state || '');
+  const [stateName, setStateName] = useState(state.currentCustomer?.state || 'Assam');
   const [pincode, setPincode] = useState(state.currentCustomer?.pincode || '');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,7 +23,7 @@ export const CartPage: React.FC = () => {
 
   useEffect(() => {
     if (customer) {
-      if (customer.address) setStreet(customer.address);
+      if (customer.address) setStreetArea(customer.address);
       if (customer.city) setCity(customer.city);
       if (customer.state) setStateName(customer.state);
       if (customer.pincode) setPincode(customer.pincode);
@@ -40,8 +42,18 @@ export const CartPage: React.FC = () => {
       return;
     }
 
-    if (!street || street.trim().length < 5) {
-      setError('Please enter a delivery street address.');
+    if (!houseNo.trim() || houseNo.trim().length < 2) {
+      setError('Please enter Flat / House No., Building or Apartment Name.');
+      return;
+    }
+
+    if (!streetArea.trim() || streetArea.trim().length < 3) {
+      setError('Please enter Street / Road, Area, Locality or Sector.');
+      return;
+    }
+
+    if (!landmark.trim() || landmark.trim().length < 3) {
+      setError('Please enter a nearby landmark (e.g. Opposite SBI Bank, Near Kali Mandir).');
       return;
     }
 
@@ -63,8 +75,10 @@ export const CartPage: React.FC = () => {
     setLoading(true);
 
     try {
+      const fullStreetAddress = `${houseNo.trim()}, ${streetArea.trim()}, Landmark: ${landmark.trim()}`;
+
       store.updateCustomerProfile({
-        address: street.trim(),
+        address: fullStreetAddress,
         city: city.trim(),
         state: stateName.trim(),
         pincode: pincode.trim(),
@@ -73,7 +87,10 @@ export const CartPage: React.FC = () => {
       const address = {
         fullName: customer.name,
         mobile: customer.mobile,
-        street: street.trim(),
+        houseNo: houseNo.trim(),
+        street: fullStreetAddress,
+        area: streetArea.trim(),
+        landmark: landmark.trim(),
         city: city.trim(),
         state: stateName.trim(),
         pincode: pincode.trim(),
@@ -207,69 +224,100 @@ export const CartPage: React.FC = () => {
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="block font-semibold text-charcoal-700 uppercase tracking-wider mb-1">
-                    Street Address
+                  <label className="block font-semibold text-charcoal-800 uppercase tracking-wider mb-1">
+                    Flat / House No., Building Name *
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="House / Street / Area"
-                    value={street}
-                    onChange={(e) => setStreet(e.target.value)}
-                    className="w-full px-3 py-2 border border-cream-300 rounded-lg outline-none focus:border-forest-700"
+                    placeholder="e.g. Flat 3B, Nilachal Residency"
+                    value={houseNo}
+                    onChange={(e) => setHouseNo(e.target.value)}
+                    className="w-full px-3 py-2 border border-cream-300 rounded-lg outline-none focus:border-forest-700 bg-cream-50 focus:bg-white transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-charcoal-800 uppercase tracking-wider mb-1">
+                    Street, Road, Area / Locality *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Graham Bazar, Near College Road"
+                    value={streetArea}
+                    onChange={(e) => setStreetArea(e.target.value)}
+                    className="w-full px-3 py-2 border border-cream-300 rounded-lg outline-none focus:border-forest-700 bg-cream-50 focus:bg-white transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-charcoal-800 uppercase tracking-wider mb-1">
+                    Prominent Landmark (Mandatory) *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Opposite SBI Bank / Near Kali Mandir"
+                    value={landmark}
+                    onChange={(e) => setLandmark(e.target.value)}
+                    className="w-full px-3 py-2 border border-cream-300 rounded-lg outline-none focus:border-forest-700 bg-cream-50 focus:bg-white transition-all"
                   />
                 </div>
 
                 <div className="grid grid-cols-3 gap-2">
                   <div>
-                    <label className="block font-semibold text-charcoal-700 uppercase tracking-wider mb-1">
-                      City
+                    <label className="block font-semibold text-charcoal-800 uppercase tracking-wider mb-1">
+                      City *
                     </label>
                     <input
                       type="text"
                       required
+                      placeholder="City"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
-                      className="w-full px-2.5 py-2 border border-cream-300 rounded-lg outline-none focus:border-forest-700"
+                      className="w-full px-2.5 py-2 border border-cream-300 rounded-lg outline-none focus:border-forest-700 bg-cream-50 focus:bg-white transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block font-semibold text-charcoal-700 uppercase tracking-wider mb-1">
-                      State
+                    <label className="block font-semibold text-charcoal-800 uppercase tracking-wider mb-1">
+                      State *
                     </label>
                     <input
                       type="text"
                       required
+                      placeholder="State"
                       value={stateName}
                       onChange={(e) => setStateName(e.target.value)}
-                      className="w-full px-2.5 py-2 border border-cream-300 rounded-lg outline-none focus:border-forest-700"
+                      className="w-full px-2.5 py-2 border border-cream-300 rounded-lg outline-none focus:border-forest-700 bg-cream-50 focus:bg-white transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block font-semibold text-charcoal-700 uppercase tracking-wider mb-1">
-                      PIN Code
+                    <label className="block font-semibold text-charcoal-800 uppercase tracking-wider mb-1">
+                      PIN Code *
                     </label>
                     <input
                       type="text"
                       required
                       maxLength={6}
+                      placeholder="PIN"
                       value={pincode}
-                      onChange={(e) => setPincode(e.target.value)}
-                      className="w-full px-2.5 py-2 border border-cream-300 rounded-lg outline-none focus:border-forest-700"
+                      onChange={(e) => setPincode(e.target.value.replace(/\D/g, ''))}
+                      className="w-full px-2.5 py-2 border border-cream-300 rounded-lg outline-none focus:border-forest-700 bg-cream-50 focus:bg-white transition-all"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-charcoal-700 uppercase tracking-wider mb-1">
-                    Order Notes (Optional)
+                  <label className="block font-semibold text-charcoal-800 uppercase tracking-wider mb-1">
+                    Delivery Instructions (Optional)
                   </label>
                   <input
                     type="text"
                     placeholder="e.g. Ring the doorbell, leave at gate"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="w-full px-3 py-2 border border-cream-300 rounded-lg outline-none focus:border-forest-700"
+                    className="w-full px-3 py-2 border border-cream-300 rounded-lg outline-none focus:border-forest-700 bg-cream-50 focus:bg-white transition-all"
                   />
                 </div>
               </div>

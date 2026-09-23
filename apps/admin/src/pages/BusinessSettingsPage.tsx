@@ -24,33 +24,61 @@ export const BusinessSettingsPage: React.FC = () => {
   const [ifsc, setIfsc] = useState(settings.ifsc);
   const [upi, setUpi] = useState(settings.upi);
   const [terms, setTerms] = useState(settings.terms);
-  const [success, setSuccess] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<{ type: 'success' | 'warning' | null; message: string }>({
+    type: null,
+    message: '',
+  });
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    store.updateBusinessSettings({
-      brandName,
-      businessName,
-      whatsappOrderNumber,
-      phone,
-      email,
-      address,
-      city,
-      state: stateName,
-      pincode,
-      gstin,
-      pan,
-      invoicePrefix,
-      lowStockDefaultPercent: Number(lowStockDefaultPercent),
-      bankName,
-      accountNumber,
-      ifsc,
-      upi,
-      terms,
-    });
+    setIsSaving(true);
+    setSaveStatus({ type: null, message: '' });
 
-    setSuccess(true);
-    setTimeout(() => setSuccess(false), 3000);
+    try {
+      const res = await store.updateBusinessSettings({
+        brandName,
+        businessName,
+        whatsappOrderNumber,
+        phone,
+        email,
+        address,
+        city,
+        state: stateName,
+        pincode,
+        gstin,
+        pan,
+        invoicePrefix,
+        lowStockDefaultPercent: Number(lowStockDefaultPercent),
+        bankName,
+        accountNumber,
+        ifsc,
+        upi,
+        terms,
+      });
+
+      if (res && res.success === false) {
+        setSaveStatus({
+          type: 'warning',
+          message: `Saved to local browser storage. Notice: Cloud sync failed (${res.error || 'Check Firestore permissions'}).`,
+        });
+      } else {
+        setSaveStatus({
+          type: 'success',
+          message: 'Settings successfully saved and synchronized to Cloud Firestore!',
+        });
+      }
+    } catch (err: any) {
+      setSaveStatus({
+        type: 'warning',
+        message: `Saved locally. Cloud sync warning: ${err?.message || 'Check database connection.'}`,
+      });
+    } finally {
+      setIsSaving(false);
+      setTimeout(() => {
+        setSaveStatus({ type: null, message: '' });
+      }, 7000);
+    }
   };
 
   return (
@@ -64,10 +92,17 @@ export const BusinessSettingsPage: React.FC = () => {
         </div>
       </div>
 
-      {success && (
+      {saveStatus.type === 'success' && (
         <div className="p-4 bg-green-950/60 border border-green-800 text-green-200 rounded-xl text-xs flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
-          <span>Settings successfully saved and synchronized!</span>
+          <span>{saveStatus.message}</span>
+        </div>
+      )}
+
+      {saveStatus.type === 'warning' && (
+        <div className="p-4 bg-amber-950/60 border border-amber-800 text-amber-200 rounded-xl text-xs flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0 animate-pulse" />
+          <span>{saveStatus.message}</span>
         </div>
       )}
 
@@ -103,7 +138,7 @@ export const BusinessSettingsPage: React.FC = () => {
               <input
                 type="text"
                 required
-                placeholder="e.g. 919876543210"
+                placeholder="e.g. 918822308551"
                 value={whatsappOrderNumber}
                 onChange={(e) => setWhatsappOrderNumber(e.target.value.replace(/\D/g, ''))}
                 className="w-full px-3 py-2 bg-admin-card border border-admin-border rounded-lg text-gray-200 outline-none focus:border-admin-accent"
@@ -294,10 +329,11 @@ export const BusinessSettingsPage: React.FC = () => {
         <div className="flex justify-end pt-4 border-t border-admin-border">
           <button
             type="submit"
-            className="inline-flex items-center gap-2 px-6 py-2.5 bg-admin-accent hover:bg-admin-gold text-black rounded-xl text-xs font-bold shadow-lg transition-all"
+            disabled={isSaving}
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-admin-accent hover:bg-admin-gold disabled:opacity-50 disabled:cursor-not-allowed text-black rounded-xl text-xs font-bold shadow-lg transition-all"
           >
             <Save className="w-4 h-4" />
-            <span>Save Settings</span>
+            <span>{isSaving ? 'Saving...' : 'Save Settings'}</span>
           </button>
         </div>
       </form>

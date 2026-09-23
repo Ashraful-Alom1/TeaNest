@@ -3,9 +3,9 @@ import { BusinessSettings } from '@tea-nest/types';
 export const DEFAULT_BUSINESS_SETTINGS: BusinessSettings = {
   brandName: 'Tea Nest',
   businessName: 'Fortunate Ventures',
-  phone: '+91 98765 43210',
+  phone: '+91 88223 08551',
   email: 'fortunateventures123@gmail.com',
-  whatsappOrderNumber: '919876543210',
+  whatsappOrderNumber: '918822308551',
   address: 'Naharkatia, Dist- Dibrugarh',
   city: 'Dibrugarh',
   state: 'Assam',

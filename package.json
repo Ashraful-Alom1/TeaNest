@@ -4,20 +4,22 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/*",
+    "functions"
   ],
   "scripts": {
     "predev": "node scripts/killPorts.js",
     "dev": "node scripts/startDev.js",
     "dev:storefront": "npm --prefix apps/storefront run dev",
     "dev:admin": "npm --prefix apps/admin run dev",
-    "build": "node scripts/build.cjs",
+    "build": "npm run build:functions && node scripts/build.cjs",
+    "build:functions": "npm --prefix functions run build",
     "build:apps": "npm run build --workspace=@tea-nest/admin && npm run build --workspace=@tea-nest/storefront",
-    "typecheck": "tsc --project packages/shared/tsconfig.json --noEmit && tsc --project packages/validation/tsconfig.json --noEmit && tsc --project apps/storefront/tsconfig.json --noEmit && tsc --project apps/admin/tsconfig.json --noEmit",
+    "typecheck": "tsc --project functions/tsconfig.json --noEmit && tsc --project packages/shared/tsconfig.json --noEmit && tsc --project packages/validation/tsconfig.json --noEmit && tsc --project apps/storefront/tsconfig.json --noEmit && tsc --project apps/admin/tsconfig.json --noEmit",
     "test": "vitest run",
     "lint": "eslint .",
     "seed": "npx tsx scripts/seed.ts",
-    "sync:server": "npx tsx watch scripts/syncServer.ts"
+    "emulators": "firebase emulators:start"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

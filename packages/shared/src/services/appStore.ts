@@ -17,7 +17,13 @@ import {
   BlogPost,
 } from '@tea-nest/types';
 import { OrderService } from './orderService';
-import { SEED_ADMIN, SEED_PRODUCT, SEED_SUPPLIER, SEED_BUSINESS_SETTINGS, SEED_BLOGS } from '../seedData';
+import {
+  SEED_ADMIN,
+  SEED_BUSINESS_SETTINGS,
+  SEED_PRODUCT,
+  SEED_PRODUCTS,
+  SEED_BLOGS,
+} from '../seedData';
 import { generateWhatsAppOrderUrl } from '../whatsapp';
 import { calculateLowStockThreshold, isLowStock } from '../inventory';
 import { calculateTaxableFromInclusive } from '../tax';
@@ -49,20 +55,91 @@ export interface AppState {
   currentAdmin: AdminUser | null;
 }
 
-const STORAGE_KEY = 'tea_nest_database_v2';
+const STORAGE_KEY = 'tea_nest_firestore_live_v1';
+
+function mergeEntities<T extends Record<string, any>>(
+  localList: T[] = [],
+  serverList: T[] = [],
+  idKey: keyof T = 'id' as keyof T,
+  onLocalNewer?: (localItem: T) => void
+): T[] {
+  const map = new Map<string, T>();
+
+  for (const item of localList) {
+    const id = String(item[idKey] || '');
+    if (id) map.set(id, item);
+  }
+
+  for (const serverItem of serverList) {
+    const id = String(serverItem[idKey] || '');
+    if (!id) continue;
+    const localItem = map.get(id);
+    if (!localItem) {
+      map.set(id, serverItem);
+    } else {
+      const localTime = new Date(localItem.updatedAt || localItem.createdAt || 0).getTime();
+      const serverTime = new Date(serverItem.updatedAt || serverItem.createdAt || 0).getTime();
+      if (serverTime >= localTime || isNaN(localTime)) {
+        map.set(id, serverItem);
+      } else {
+        if (onLocalNewer) {
+          onLocalNewer(localItem);
+        }
+      }
+    }
+  }
+
+  return Array.from(map.values());
+}
 
 export class AppStore {
   private state: AppState;
   private listeners: Set<() => void> = new Set();
   private orderService: OrderService;
 
-  private syncUrl = typeof window !== 'undefined' ? '/api/state' : 'http://localhost:5001/api/state';
-  private syncInProgress = false;
-
   constructor() {
     const loaded = this.loadFromStorage();
     if (loaded) {
-      this.state = loaded;
+      this.state = {
+        ...this.getInitialState(),
+        ...loaded,
+        products:
+          loaded.products && loaded.products.length > 0
+            ? mergeEntities([...SEED_PRODUCTS], loaded.products, 'id')
+            : [...SEED_PRODUCTS],
+        suppliers:
+          loaded.suppliers && loaded.suppliers.length > 0
+            ? loaded.suppliers.filter(
+                (s: Supplier) =>
+                  s.id !== 'sup_naharkatia_estate' &&
+                  !s.companyName?.includes('Brahmaputra Organic Tea Estates')
+              )
+            : [],
+        blogs:
+          loaded.blogs && loaded.blogs.length > 0
+            ? loaded.blogs
+            : [...SEED_BLOGS],
+        adminUsers:
+          loaded.adminUsers && loaded.adminUsers.length > 0
+            ? loaded.adminUsers
+            : [{ ...SEED_ADMIN }],
+        businessSettings: (() => {
+          const raw = loaded.businessSettings || SEED_BUSINESS_SETTINGS;
+          let num = (raw.whatsappOrderNumber || '918822308551').replace(/\D/g, '');
+          if (!num || num.includes('9876543210') || num.includes('1234567890') || num.length < 10) {
+            num = '918822308551';
+          } else if (num.length === 10) {
+            num = `91${num}`;
+          }
+          return {
+            ...SEED_BUSINESS_SETTINGS,
+            ...raw,
+            whatsappOrderNumber: num,
+            phone: raw.phone && !raw.phone.includes('9876543210') ? raw.phone : '+91 88223 08551',
+          };
+        })(),
+        cart: loaded.cart || [],
+      };
     } else {
       this.state = this.getInitialState();
       this.saveToStorage();
@@ -70,30 +147,150 @@ export class AppStore {
 
     this.orderService = this.createOrderService();
 
-    // Start background sync with real-time SSE & polling fallback
+    // Start background sync with real-time Google Cloud Firestore
     if (typeof window !== 'undefined') {
-      // 1. Live Google Cloud Firestore real-time synchronization
       try {
         firestoreSync.subscribeToUpdates((data) => {
           let hasChanges = false;
           if (data.products && data.products.length > 0) {
-            this.state.products = data.products;
+            this.state.products = mergeEntities(
+              this.state.products,
+              data.products,
+              'id',
+              (local) => firestoreSync.saveDocument('products', local.id, local)
+            );
             hasChanges = true;
           }
           if (data.businessSettings) {
-            this.state.businessSettings = data.businessSettings;
-            hasChanges = true;
+            const localUpdated = new Date(this.state.businessSettings?.updatedAt || 0).getTime();
+            const serverUpdated = new Date(data.businessSettings.updatedAt || 0).getTime();
+
+            if (serverUpdated >= localUpdated || !this.state.businessSettings?.updatedAt) {
+              let num = (data.businessSettings.whatsappOrderNumber || '918822308551').replace(/\D/g, '');
+              if (!num || num.includes('9876543210') || num.includes('1234567890') || num.length < 10) {
+                num = '918822308551';
+              } else if (num.length === 10) {
+                num = `91${num}`;
+              }
+              this.state.businessSettings = {
+                ...data.businessSettings,
+                whatsappOrderNumber: num,
+                phone:
+                  data.businessSettings.phone && !data.businessSettings.phone.includes('9876543210')
+                    ? data.businessSettings.phone
+                    : '+91 88223 08551',
+              };
+              hasChanges = true;
+            } else {
+              // Local is newer: push back to Firestore
+              firestoreSync.saveDocument('settings', 'business', this.state.businessSettings);
+            }
           }
           if (data.orders && data.orders.length > 0) {
-            this.state.orders = data.orders;
+            this.state.orders = mergeEntities(
+              this.state.orders,
+              data.orders,
+              'id',
+              (local) => firestoreSync.saveDocument('orders', local.id, local)
+            ).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
             hasChanges = true;
           }
           if (data.inventoryMovements && data.inventoryMovements.length > 0) {
-            this.state.inventoryMovements = data.inventoryMovements;
+            this.state.inventoryMovements = mergeEntities(
+              this.state.inventoryMovements,
+              data.inventoryMovements,
+              'movementId'
+            ).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
             hasChanges = true;
           }
           if (data.invoices && data.invoices.length > 0) {
-            this.state.invoices = data.invoices;
+            this.state.invoices = mergeEntities(
+              this.state.invoices,
+              data.invoices,
+              'invoiceId',
+              (local) => firestoreSync.saveDocument('invoices', local.invoiceId, local)
+            ).sort(
+              (a, b) =>
+                new Date(b.createdAt || b.invoiceDate).getTime() -
+                new Date(a.createdAt || a.invoiceDate).getTime()
+            );
+            hasChanges = true;
+          }
+          if (data.lowStockAlerts && data.lowStockAlerts.length > 0) {
+            this.state.lowStockAlerts = data.lowStockAlerts;
+            hasChanges = true;
+          }
+          if (data.suppliers && data.suppliers.length > 0) {
+            this.state.suppliers = mergeEntities(
+              this.state.suppliers,
+              data.suppliers,
+              'id',
+              (local) => firestoreSync.saveDocument('suppliers', local.id, local)
+            );
+            hasChanges = true;
+          }
+          if (data.purchases && data.purchases.length > 0) {
+            this.state.purchases = mergeEntities(
+              this.state.purchases,
+              data.purchases,
+              'purchaseId',
+              (local) => firestoreSync.saveDocument('purchases', local.purchaseId, local)
+            ).sort(
+              (a, b) =>
+                new Date(b.createdAt || b.purchaseDate).getTime() -
+                new Date(a.createdAt || a.purchaseDate).getTime()
+            );
+            hasChanges = true;
+          }
+          if (data.expenses && data.expenses.length > 0) {
+            this.state.expenses = mergeEntities(
+              this.state.expenses,
+              data.expenses,
+              'expenseId',
+              (local) => firestoreSync.saveDocument('expenses', local.expenseId, local)
+            ).sort(
+              (a, b) =>
+                new Date(b.createdAt || b.expenseDate).getTime() -
+                new Date(a.createdAt || a.expenseDate).getTime()
+            );
+            hasChanges = true;
+          }
+          if (data.customers && data.customers.length > 0) {
+            this.state.customers = mergeEntities(this.state.customers, data.customers, 'uid');
+            hasChanges = true;
+          }
+          if (data.blogs && data.blogs.length > 0) {
+            this.state.blogs = mergeEntities(
+              this.state.blogs,
+              data.blogs,
+              'id',
+              (local) => firestoreSync.saveDocument('blogs', local.id, local)
+            ).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            hasChanges = true;
+          }
+          if (data.adminUsers && data.adminUsers.length > 0) {
+            this.state.adminUsers = mergeEntities(this.state.adminUsers, data.adminUsers, 'uid');
+            hasChanges = true;
+          }
+          if (data.sales && data.sales.length > 0) {
+            this.state.sales = mergeEntities(
+              this.state.sales,
+              data.sales,
+              'saleId',
+              (local) => firestoreSync.saveDocument('sales', local.saleId, local)
+            ).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            hasChanges = true;
+          }
+          if (data.auditLogs && data.auditLogs.length > 0) {
+            this.state.auditLogs = mergeEntities(this.state.auditLogs, data.auditLogs, 'logId').sort(
+              (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+            );
+            hasChanges = true;
+          }
+          if (data.crmTimeline && data.crmTimeline.length > 0) {
+            this.state.crmTimeline = mergeEntities(this.state.crmTimeline, data.crmTimeline, 'id').sort(
+              (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
             hasChanges = true;
           }
           if (hasChanges) {
@@ -104,30 +301,6 @@ export class AppStore {
         });
       } catch (err) {
         console.warn('[AppStore] Firestore live listener setup:', err);
-      }
-
-      // 2. Local fallback sync server (only active during local development)
-      const isDev = typeof import.meta !== 'undefined' && Boolean((import.meta as any).env?.DEV);
-      if (isDev) {
-        this.pullFromServer();
-        setInterval(() => {
-          this.pullFromServer();
-        }, 2500);
-
-        if (typeof window.EventSource !== 'undefined') {
-          try {
-            const es = new EventSource('/api/events');
-            es.onmessage = () => this.pullFromServer();
-            es.addEventListener('ORDER_CREATED', () => this.pullFromServer());
-            es.addEventListener('ORDER_CONFIRMED', () => this.pullFromServer());
-            es.addEventListener('ORDER_UPDATED', () => this.pullFromServer());
-            es.addEventListener('INVENTORY_ADJUSTED', () => this.pullFromServer());
-            es.addEventListener('STATE_UPDATED', () => this.pullFromServer());
-            es.addEventListener('STATE_RESET', () => this.pullFromServer());
-          } catch {
-            // SSE fallback
-          }
-        }
       }
     }
   }
@@ -180,191 +353,20 @@ export class AppStore {
     this.orderService = this.createOrderService();
   }
 
-  private async pullFromServer(): Promise<void> {
-    if (typeof window === 'undefined') return;
-    try {
-      const res = await fetch(this.syncUrl);
-      if (!res.ok) return;
-      const remote = await res.json();
-      if (remote && Array.isArray(remote.products) && remote.products.length > 0) {
-        // Exclude local session-specific state when diffing
-        const remoteDataToCompare = {
-          products: remote.products,
-          orders: remote.orders,
-          sales: remote.sales,
-          invoices: remote.invoices,
-          inventoryMovements: remote.inventoryMovements,
-          lowStockAlerts: remote.lowStockAlerts,
-          suppliers: remote.suppliers,
-          purchases: remote.purchases,
-          expenses: remote.expenses,
-          customers: remote.customers,
-          auditLogs: remote.auditLogs,
-          crmTimeline: remote.crmTimeline,
-          businessSettings: remote.businessSettings,
-          blogs: remote.blogs,
-        };
-        const currentDataToCompare = {
-          products: this.state.products,
-          orders: this.state.orders,
-          sales: this.state.sales,
-          invoices: this.state.invoices,
-          inventoryMovements: this.state.inventoryMovements,
-          lowStockAlerts: this.state.lowStockAlerts,
-          suppliers: this.state.suppliers,
-          purchases: this.state.purchases,
-          expenses: this.state.expenses,
-          customers: this.state.customers,
-          auditLogs: this.state.auditLogs,
-          crmTimeline: this.state.crmTimeline,
-          businessSettings: this.state.businessSettings,
-          blogs: this.state.blogs,
-        };
-
-        const remoteHash = JSON.stringify(remoteDataToCompare);
-        const currentHash = JSON.stringify(currentDataToCompare);
-
-        if (remoteHash !== currentHash) {
-          const localCustomer = this.state.currentCustomer;
-          const localAdmin = this.state.currentAdmin;
-          const localCart = this.state.cart;
-
-          this.state = {
-            ...this.state,
-            ...remote,
-            currentCustomer: localCustomer || remote.currentCustomer,
-            currentAdmin: localAdmin || remote.currentAdmin,
-            cart: localCart,
-          };
-
-          this.updateOrderServiceFromState();
-          this.saveToStorage();
-          this.listeners.forEach((l) => l());
-        }
-      }
-    } catch {
-      // offline / backend restarting, seamless fallback
-    }
-  }
-
-  private async pushToServer(): Promise<void> {
-    const isDev = typeof import.meta !== 'undefined' && Boolean((import.meta as any).env?.DEV);
-    if (!isDev || typeof window === 'undefined' || this.syncInProgress) return;
-    try {
-      this.syncInProgress = true;
-      await fetch(this.syncUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(this.state),
-      });
-    } catch {
-      // fallback
-    } finally {
-      this.syncInProgress = false;
-    }
-  }
-
   private getInitialState(): AppState {
     return {
-      products: [{ ...SEED_PRODUCT }],
+      products: [...SEED_PRODUCTS],
       orders: [],
       sales: [],
       invoices: [],
-      inventoryMovements: [
-        {
-          movementId: 'mov_initial_seed',
-          productId: SEED_PRODUCT.id,
-          productName: SEED_PRODUCT.name,
-          type: 'PURCHASE',
-          quantity: 100,
-          beforeQuantity: 0,
-          afterQuantity: 100,
-          referenceId: 'PO-INITIAL',
-          reason: 'Initial stock intake from Brahmaputra Organic Tea Estates',
-          createdBy: 'admin@teanest.in',
-          createdAt: new Date().toISOString(),
-        },
-      ],
+      inventoryMovements: [],
       lowStockAlerts: [],
-      suppliers: [{ ...SEED_SUPPLIER }],
-      purchases: [
-        {
-          purchaseId: 'po_initial_001',
-          purchaseNumber: 'PO-2026-000001',
-          supplierId: SEED_SUPPLIER.id,
-          supplierName: SEED_SUPPLIER.companyName,
-          invoiceNumber: 'BOTE-INV-9821',
-          purchaseDate: new Date(Date.now() - 86400000 * 7).toISOString().substring(0, 10),
-          items: [
-            {
-              productId: SEED_PRODUCT.id,
-              sku: SEED_PRODUCT.sku,
-              name: SEED_PRODUCT.name,
-              quantity: 100,
-              receivedQuantity: 100,
-              unitCost: 220,
-              gstRate: 5,
-              taxableAmount: 22000,
-              tax: 1100,
-              total: 23100,
-            },
-          ],
-          subtotal: 22000,
-          tax: 1100,
-          discount: 0,
-          shipping: 0,
-          grandTotal: 23100,
-          paymentStatus: 'PAID',
-          purchaseStatus: 'RECEIVED',
-          notes: 'First flush organic Assam black tea intake',
-          receivedAt: new Date(Date.now() - 86400000 * 7).toISOString(),
-          createdBy: 'admin@teanest.in',
-          createdAt: new Date(Date.now() - 86400000 * 7).toISOString(),
-          updatedAt: new Date(Date.now() - 86400000 * 7).toISOString(),
-        },
-      ],
-      expenses: [
-        {
-          expenseId: 'exp_001',
-          category: 'Packaging',
-          description: '500g matte stand-up pouches with zip lock & gold foil printing',
-          amount: 12500,
-          gstAmount: 2250,
-          vendor: 'Apex Premium Packagers, Guwahati',
-          expenseDate: new Date(Date.now() - 86400000 * 10).toISOString().substring(0, 10),
-          paymentMethod: 'UPI',
-          status: 'PAID',
-          createdBy: 'admin@teanest.in',
-          createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
-        },
-        {
-          expenseId: 'exp_002',
-          category: 'Transport',
-          description: 'Tea estate batch transit from Naharkatia to Dibrugarh warehouse',
-          amount: 3500,
-          gstAmount: 175,
-          vendor: 'Assam Speed Cargo',
-          expenseDate: new Date(Date.now() - 86400000 * 6).toISOString().substring(0, 10),
-          paymentMethod: 'Bank Transfer',
-          status: 'PAID',
-          createdBy: 'admin@teanest.in',
-          createdAt: new Date(Date.now() - 86400000 * 6).toISOString(),
-        },
-      ],
+      suppliers: [],
+      purchases: [],
+      expenses: [],
       customers: [],
       adminUsers: [{ ...SEED_ADMIN }],
-      auditLogs: [
-        {
-          logId: 'log_seed_init',
-          actorUid: SEED_ADMIN.uid,
-          actorEmail: SEED_ADMIN.email,
-          actorRole: 'SUPER_ADMIN',
-          action: 'LOGIN',
-          entityType: 'SYSTEM',
-          entityId: 'SYS',
-          timestamp: new Date().toISOString(),
-        },
-      ],
+      auditLogs: [],
       crmTimeline: [],
       businessSettings: { ...SEED_BUSINESS_SETTINGS },
       blogs: [...SEED_BLOGS],
@@ -399,8 +401,8 @@ export class AppStore {
   }
 
   private notify(syncDoc?: { collection: string; id: string; data: any }): void {
+    this.state = { ...this.state };
     this.saveToStorage();
-    this.pushToServer();
     if (syncDoc) {
       firestoreSync.saveDocument(syncDoc.collection, syncDoc.id, syncDoc.data);
     }
@@ -533,7 +535,6 @@ export class AppStore {
     });
 
     this.saveToStorage();
-    this.pushToServer();
     this.notify();
     return admin;
   }
@@ -541,7 +542,6 @@ export class AppStore {
   public logoutAdmin(): void {
     this.state.currentAdmin = null;
     this.saveToStorage();
-    this.pushToServer();
     this.notify();
   }
 
@@ -549,15 +549,22 @@ export class AppStore {
   // Cart Operations
   // ==========================================
   public addToCart(product: Product, quantity = 1): void {
-    const existing = this.state.cart.find((item) => item.product.id === product.id);
-    if (existing) {
-      existing.quantity = Math.min(product.stockQuantity, existing.quantity + quantity);
+    const cart = [...this.state.cart];
+    const existingIndex = cart.findIndex((item) => item.product.id === product.id);
+    if (existingIndex >= 0) {
+      const existing = cart[existingIndex];
+      const newQty = Math.min(product.stockQuantity, existing.quantity + quantity);
+      cart[existingIndex] = { ...existing, quantity: newQty };
     } else {
-      this.state.cart.push({
-        product,
+      cart.push({
+        product: { ...product },
         quantity: Math.min(product.stockQuantity, quantity),
       });
     }
+    this.state = {
+      ...this.state,
+      cart,
+    };
     this.notify();
   }
 
@@ -566,20 +573,35 @@ export class AppStore {
       this.removeFromCart(productId);
       return;
     }
-    const item = this.state.cart.find((i) => i.product.id === productId);
-    if (item) {
-      item.quantity = Math.min(item.product.stockQuantity, quantity);
-      this.notify();
-    }
+    const cart = this.state.cart.map((item) => {
+      if (item.product.id === productId) {
+        return {
+          ...item,
+          quantity: Math.min(item.product.stockQuantity, quantity),
+        };
+      }
+      return item;
+    });
+    this.state = {
+      ...this.state,
+      cart,
+    };
+    this.notify();
   }
 
   public removeFromCart(productId: string): void {
-    this.state.cart = this.state.cart.filter((i) => i.product.id !== productId);
+    this.state = {
+      ...this.state,
+      cart: this.state.cart.filter((i) => i.product.id !== productId),
+    };
     this.notify();
   }
 
   public clearCart(): void {
-    this.state.cart = [];
+    this.state = {
+      ...this.state,
+      cart: [],
+    };
     this.notify();
   }
 
@@ -636,16 +658,17 @@ export class AppStore {
       notes,
     });
 
-    // Sync state
     this.syncFromOrderService();
 
     // Update customer stats
     customer.totalOrders += 1;
     customer.lastOrderDate = new Date().toISOString();
 
+    const pendingOrder = this.state.orders.find((o) => o.id === order.id) || order;
+
     const whatsappUrl = generateWhatsAppOrderUrl({
       phoneNumber: this.state.businessSettings.whatsappOrderNumber,
-      orderNumber: order.orderNumber,
+      orderNumber: pendingOrder.orderNumber,
       customerName: customer.name,
       customerMobile: customer.mobile,
       customerEmail: customer.email,
@@ -659,13 +682,24 @@ export class AppStore {
           price: product.sellingPrice,
         },
       ],
-      grandTotal: order.grandTotal,
+      grandTotal: pendingOrder.grandTotal,
+      notes,
     });
 
-    firestoreSync.saveDocument('orders', order.id, order);
-    firestoreSync.saveDocument('customers', customer.uid, customer);
+    // Execute strict ACID transaction in Cloud Firestore (records order intent without auto-confirming)
+    firestoreSync.createOrderACID({
+      customer,
+      address,
+      items: [{ product, quantity }],
+      notes,
+      isWhatsApp: true,
+      autoConfirm: false,
+    }).catch((err) => {
+      console.warn('[AppStore] Firestore ACID order commit notice:', err);
+    });
+
     this.notify();
-    return { order, whatsappUrl };
+    return { order: pendingOrder, whatsappUrl };
   }
 
   public createCartOrder(
@@ -743,13 +777,17 @@ export class AppStore {
       notes,
     });
 
+    this.syncFromOrderService();
+
     // Update customer stats
     customer.totalOrders += 1;
     customer.lastOrderDate = new Date().toISOString();
 
+    const pendingOrder = this.state.orders.find((o) => o.id === order.id) || order;
+
     const whatsappUrl = generateWhatsAppOrderUrl({
       phoneNumber: this.state.businessSettings.whatsappOrderNumber,
-      orderNumber: order.orderNumber,
+      orderNumber: pendingOrder.orderNumber,
       customerName: customer.name,
       customerMobile: customer.mobile,
       customerEmail: customer.email,
@@ -761,16 +799,27 @@ export class AppStore {
         quantity: i.quantity,
         price: i.price,
       })),
-      grandTotal: order.grandTotal,
+      grandTotal: pendingOrder.grandTotal,
+      notes,
     });
 
-    // Clear cart and sync
+    // Clear cart and execute strict ACID transaction in Cloud Firestore (records order intent without auto-confirming)
+    const itemsSnapshot = this.state.cart.map(({ product, quantity }) => ({ product, quantity }));
     this.clearCart();
-    this.syncFromOrderService();
-    firestoreSync.saveDocument('orders', order.id, order);
-    firestoreSync.saveDocument('customers', customer.uid, customer);
+
+    firestoreSync.createOrderACID({
+      customer,
+      address,
+      items: itemsSnapshot,
+      notes,
+      isWhatsApp: true,
+      autoConfirm: false,
+    }).catch((err) => {
+      console.warn('[AppStore] Firestore ACID cart order commit notice:', err);
+    });
+
     this.notify();
-    return { order, whatsappUrl };
+    return { order: pendingOrder, whatsappUrl };
   }
 
   public async confirmOrder(
@@ -787,52 +836,165 @@ export class AppStore {
     return result;
   }
 
+  public async cancelOrder(
+    orderId: string,
+    actor?: { uid: string; email: string; role: any }
+  ): Promise<Order> {
+    const admin = actor || this.state.currentAdmin || SEED_ADMIN;
+    const result = await this.orderService.cancelOrder(orderId, admin);
+    this.syncFromOrderService();
+    firestoreSync.saveDocument('orders', orderId, result);
+    this.notify();
+    return result;
+  }
+
   public updateOrderStatus(orderId: string, status: any): void {
     if (status === 'CANCELLED') {
-      const admin = this.state.currentAdmin || SEED_ADMIN;
-      this.orderService.cancelOrder(orderId, admin);
-      this.syncFromOrderService();
-      const cancelledOrder = this.state.orders.find((o) => o.id === orderId);
-      if (cancelledOrder) {
-        firestoreSync.saveDocument('orders', orderId, cancelledOrder);
-      }
-      this.notify();
+      this.cancelOrder(orderId).catch((err) => {
+        console.error('[AppStore] Failed to cancel order:', err);
+      });
       return;
     }
 
     const order = this.state.orders.find((o) => o.id === orderId);
     if (order) {
+      const now = new Date().toISOString();
       order.status = status;
-      order.updatedAt = new Date().toISOString();
+      order.updatedAt = now;
+      if (status === 'CONFIRMED' && !order.confirmedAt) {
+        order.confirmedAt = now;
+      } else if (status === 'PROCESSING' && !order.processingAt) {
+        order.processingAt = now;
+      } else if (status === 'SHIPPED' && !order.shippedAt) {
+        order.shippedAt = now;
+      } else if (status === 'DELIVERED' && !order.deliveredAt) {
+        order.deliveredAt = now;
+      }
+
       const osOrder = this.orderService.getState().orders[orderId];
       if (osOrder) {
-        osOrder.status = status;
-        osOrder.updatedAt = order.updatedAt;
+        Object.assign(osOrder, order);
       }
       firestoreSync.saveDocument('orders', orderId, order);
       this.notify();
     }
   }
 
+  public shipOrder(
+    orderId: string,
+    courierName: string,
+    trackingNumber: string,
+    trackingUrl?: string
+  ): void {
+    const order = this.state.orders.find((o) => o.id === orderId);
+    if (!order) throw new Error('Order not found');
+
+    const prevStatus = order.status;
+    const now = new Date().toISOString();
+    order.status = 'SHIPPED';
+    order.shippedAt = now;
+    order.updatedAt = now;
+    order.courierName = courierName;
+    order.trackingNumber = trackingNumber;
+    order.trackingUrl = trackingUrl;
+
+    const osOrder = this.orderService.getState().orders[orderId];
+    if (osOrder) {
+      Object.assign(osOrder, order);
+    }
+
+    this.state.crmTimeline.unshift({
+      id: `crm_${Date.now()}`,
+      customerId: order.customerId,
+      type: 'ORDER_SHIPPED',
+      description: `Order ${order.orderNumber} dispatched via ${courierName} (Tracking: ${trackingNumber})`,
+      metadata: { orderId: order.id, courierName, trackingNumber, trackingUrl },
+      createdAt: now,
+    });
+
+    const logEntry: AuditLog = {
+      logId: `log_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      actorUid: this.state.currentAdmin?.uid || 'admin',
+      actorEmail: this.state.currentAdmin?.email || 'admin@teanest.in',
+      actorRole: this.state.currentAdmin?.role || 'SUPER_ADMIN',
+      action: 'ORDER_SHIPPED',
+      entityType: 'ORDER',
+      entityId: order.id,
+      before: { status: prevStatus, paymentStatus: order.paymentStatus },
+      after: {
+        status: 'SHIPPED',
+        paymentStatus: order.paymentStatus,
+        orderNumber: order.orderNumber,
+        courierName,
+        trackingNumber,
+        trackingUrl,
+      },
+      timestamp: now,
+    };
+    this.state.auditLogs.unshift(logEntry);
+    if (this.orderService.getState().auditLogs) {
+      this.orderService.getState().auditLogs.unshift(logEntry);
+    }
+    firestoreSync.saveDocument('auditLogs', logEntry.logId, logEntry);
+
+    firestoreSync.saveDocument('orders', orderId, order);
+    this.notify();
+  }
+
   public updateOrderPaymentStatus(orderId: string, paymentStatus: 'UNPAID' | 'PAID'): void {
     const order = this.state.orders.find((o) => o.id === orderId);
     if (order) {
+      const prevPaymentStatus = order.paymentStatus || 'UNPAID';
+      const now = new Date().toISOString();
       order.paymentStatus = paymentStatus;
-      order.updatedAt = new Date().toISOString();
+      order.updatedAt = now;
+
       const osOrder = this.orderService.getState().orders[orderId];
       if (osOrder) {
         osOrder.paymentStatus = paymentStatus;
-        osOrder.updatedAt = order.updatedAt;
+        osOrder.updatedAt = now;
       }
       const invoice = this.state.invoices.find((i) => i.orderId === orderId);
       if (invoice) {
         invoice.paymentStatus = paymentStatus;
+        firestoreSync.saveDocument('invoices', invoice.invoiceId, invoice);
       }
       const sale = this.state.sales.find((s) => s.orderId === orderId);
       if (sale) {
         sale.paymentStatus = paymentStatus;
+        firestoreSync.saveDocument('sales', sale.saleId, sale);
       }
       firestoreSync.saveDocument('orders', orderId, order);
+
+      // Record Audit Log for Payment Status Update
+      const logEntry: AuditLog = {
+        logId: `log_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        actorUid: this.state.currentAdmin?.uid || 'admin',
+        actorEmail: this.state.currentAdmin?.email || 'admin@teanest.in',
+        actorRole: this.state.currentAdmin?.role || 'SUPER_ADMIN',
+        action: 'ORDER_PAYMENT_UPDATED',
+        entityType: 'ORDER',
+        entityId: order.id,
+        before: { orderNumber: order.orderNumber, paymentStatus: prevPaymentStatus },
+        after: { orderNumber: order.orderNumber, paymentStatus },
+        timestamp: now,
+      };
+      this.state.auditLogs.unshift(logEntry);
+      if (this.orderService.getState().auditLogs) {
+        this.orderService.getState().auditLogs.unshift(logEntry);
+      }
+      firestoreSync.saveDocument('auditLogs', logEntry.logId, logEntry);
+
+      // Record CRM timeline event
+      this.state.crmTimeline.unshift({
+        id: `crm_${Date.now()}`,
+        customerId: order.customerId,
+        type: 'ORDER_CONFIRMED',
+        description: `Order ${order.orderNumber} payment marked as ${paymentStatus}.`,
+        metadata: { orderId: order.id, orderNumber: order.orderNumber, paymentStatus },
+        createdAt: now,
+      });
+
       this.notify();
     }
   }
@@ -1035,8 +1197,68 @@ export class AppStore {
     };
     this.state.suppliers.push(supplier);
     firestoreSync.saveDocument('suppliers', supplier.id, supplier);
+
+    this.state.auditLogs.push({
+      logId: `log_${Date.now()}`,
+      actorUid: this.state.currentAdmin?.uid || 'admin',
+      actorEmail: this.state.currentAdmin?.email || 'admin@teanest.in',
+      actorRole: this.state.currentAdmin?.role || 'SUPER_ADMIN',
+      action: 'SUPPLIER_CREATED',
+      entityType: 'SUPPLIER',
+      entityId: supplier.id,
+      after: supplier,
+      timestamp: new Date().toISOString(),
+    });
+
     this.notify();
     return supplier;
+  }
+
+  public updateSupplier(id: string, updates: Partial<Supplier>): Supplier {
+    const supplier = this.state.suppliers.find((s) => s.id === id);
+    if (!supplier) throw new Error('Supplier not found');
+
+    const before = { ...supplier };
+    Object.assign(supplier, updates, { updatedAt: new Date().toISOString() });
+    firestoreSync.saveDocument('suppliers', supplier.id, supplier);
+
+    this.state.auditLogs.push({
+      logId: `log_${Date.now()}`,
+      actorUid: this.state.currentAdmin?.uid || 'admin',
+      actorEmail: this.state.currentAdmin?.email || 'admin@teanest.in',
+      actorRole: this.state.currentAdmin?.role || 'SUPER_ADMIN',
+      action: 'SUPPLIER_UPDATED',
+      entityType: 'SUPPLIER',
+      entityId: supplier.id,
+      before,
+      after: supplier,
+      timestamp: new Date().toISOString(),
+    });
+
+    this.notify();
+    return supplier;
+  }
+
+  public deleteSupplier(id: string): void {
+    const supplier = this.state.suppliers.find((s) => s.id === id);
+    if (!supplier) return;
+
+    this.state.suppliers = this.state.suppliers.filter((s) => s.id !== id);
+    firestoreSync.deleteDocument('suppliers', id);
+
+    this.state.auditLogs.push({
+      logId: `log_${Date.now()}`,
+      actorUid: this.state.currentAdmin?.uid || 'admin',
+      actorEmail: this.state.currentAdmin?.email || 'admin@teanest.in',
+      actorRole: this.state.currentAdmin?.role || 'SUPER_ADMIN',
+      action: 'SUPPLIER_DELETED',
+      entityType: 'SUPPLIER',
+      entityId: id,
+      before: supplier,
+      timestamp: new Date().toISOString(),
+    });
+
+    this.notify();
   }
 
   public createPurchase(purchaseData: Omit<Purchase, 'purchaseId' | 'purchaseNumber' | 'createdAt' | 'updatedAt' | 'createdBy'>): Purchase {
@@ -1081,14 +1303,14 @@ export class AppStore {
     return expense;
   }
 
-  public updateBusinessSettings(settings: Partial<BusinessSettings>): void {
+  public async updateBusinessSettings(
+    settings: Partial<BusinessSettings>
+  ): Promise<{ success: boolean; error?: string }> {
     this.state.businessSettings = {
       ...this.state.businessSettings,
       ...settings,
       updatedAt: new Date().toISOString(),
     };
-
-    firestoreSync.saveDocument('businessSettings', 'default', this.state.businessSettings);
 
     this.state.auditLogs.push({
       logId: `log_${Date.now()}`,
@@ -1102,6 +1324,7 @@ export class AppStore {
     });
 
     this.notify();
+    return await firestoreSync.saveDocument('settings', 'business', this.state.businessSettings);
   }
 
   // ==========================================
@@ -1218,13 +1441,25 @@ export class AppStore {
   private syncFromOrderService(): void {
     const s = this.orderService.getState();
     this.state.products = Object.values(s.products);
-    this.state.orders = Object.values(s.orders);
-    this.state.sales = Object.values(s.sales);
-    this.state.invoices = Object.values(s.invoices);
-    this.state.inventoryMovements = [...s.inventoryMovements];
+    this.state.orders = Object.values(s.orders).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+    this.state.sales = Object.values(s.sales).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+    this.state.invoices = Object.values(s.invoices).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+    this.state.inventoryMovements = [...s.inventoryMovements].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
     this.state.lowStockAlerts = Object.values(s.lowStockAlerts);
-    this.state.auditLogs = [...s.auditLogs];
-    this.state.crmTimeline = [...s.crmTimeline];
+    this.state.auditLogs = [...s.auditLogs].sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
+    this.state.crmTimeline = [...s.crmTimeline].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }
 }
 

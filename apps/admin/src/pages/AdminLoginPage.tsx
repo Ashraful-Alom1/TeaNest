@@ -177,7 +177,7 @@ export const AdminLoginPage: React.FC = () => {
                 type="text"
                 required
                 autoComplete="username"
-                placeholder="admin@teanest.in or +91 98540 12345"
+                placeholder="admin@teanest.in or +91 88223 08551"
                 value={loginId}
                 onChange={(e) => setLoginId(e.target.value)}
                 className="w-full pl-10 pr-3 py-2.5 bg-[#0f1210] border border-[#2d3830] focus:border-[#c5a059] rounded-xl text-sm text-[#f5f2e9] placeholder-[#556358] outline-none transition-all shadow-inner"
@@ -281,7 +281,7 @@ export const AdminLoginPage: React.FC = () => {
               Email: <span className="text-[#c5a059] font-bold">admin@teanest.in</span>
             </p>
             <p>
-              Phone: <span className="text-[#c5a059] font-bold">+91 98540 12345</span>
+              Phone: <span className="text-[#c5a059] font-bold">+91 88223 08551</span>
             </p>
             <p>
               Passcode: <span className="text-[#c5a059] font-bold">SuperAdminPass2026!</span>

@@ -1,6 +1,8 @@
 node_modules/
 dist/
 build/
+lib/
+functions/lib/
 .cache/
 *.log
 firebase-debug.log*

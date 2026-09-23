@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ChevronLeft, FileText, MapPin, Printer } from 'lucide-react';
-import { useTeaNestStore, formatCurrency, formatDate, formatDateTime } from '@tea-nest/shared';
+import {
+  ChevronLeft,
+  FileText,
+  MapPin,
+  Printer,
+  MessageSquare,
+} from 'lucide-react';
+import { useTeaNestStore, formatCurrency, formatDate, formatDateTime, generateOrderSupportWhatsAppUrl } from '@tea-nest/shared';
+import { OrderTrackingStepper } from '../components/OrderTrackingStepper';
 
 export const OrderDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -10,6 +17,7 @@ export const OrderDetailPage: React.FC = () => {
 
   const order = state.orders.find((o) => o.id === id);
   const invoice = order?.invoiceId ? state.invoices.find((i) => i.invoiceId === order.invoiceId) : null;
+  const settings = state.businessSettings;
 
   if (!order) {
     return (
@@ -23,6 +31,12 @@ export const OrderDetailPage: React.FC = () => {
       </div>
     );
   }
+
+  const supportWhatsAppUrl = generateOrderSupportWhatsAppUrl(
+    settings.whatsappOrderNumber,
+    order.orderNumber,
+    order.customerName
+  );
 
   return (
     <div className="min-h-screen bg-cream-50 text-charcoal-900 py-12">
@@ -42,8 +56,16 @@ export const OrderDetailPage: React.FC = () => {
               <h1 className="font-serif text-2xl font-bold text-charcoal-950">
                 Order {order.orderNumber}
               </h1>
-              <span className="px-3 py-1 bg-forest-900 text-gold-300 text-xs font-bold rounded-full">
-                {order.status}
+              <span className={`px-3 py-1 text-xs font-bold rounded-full ${
+                order.status === 'WHATSAPP_PENDING' || order.status === 'PENDING_CONFIRMATION' || order.status === 'DRAFT'
+                  ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                  : order.status === 'CANCELLED'
+                  ? 'bg-rose-100 text-rose-800 border border-rose-300'
+                  : 'bg-forest-900 text-gold-300'
+              }`}>
+                {order.status === 'WHATSAPP_PENDING' || order.status === 'PENDING_CONFIRMATION' || order.status === 'DRAFT'
+                  ? 'WAIT FOR CONFIRMATION'
+                  : order.status}
               </span>
             </div>
             <p className="text-xs text-charcoal-500 mt-1">
@@ -51,15 +73,32 @@ export const OrderDetailPage: React.FC = () => {
             </p>
           </div>
 
-          {invoice && (
-            <button
-              onClick={() => setShowInvoiceModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-forest-800 hover:bg-forest-900 text-gold-300 font-semibold text-xs rounded-xl shadow transition-colors"
+          <div className="flex flex-wrap items-center gap-2">
+            <a
+              href={supportWhatsAppUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1EBE5D] text-black font-bold text-xs rounded-xl shadow transition-colors"
             >
-              <FileText className="w-4 h-4" />
-              <span>View GST Tax Invoice ({invoice.invoiceNumber})</span>
-            </button>
-          )}
+              <MessageSquare className="w-4 h-4" />
+              <span>WhatsApp Support</span>
+            </a>
+
+            {invoice && (
+              <button
+                onClick={() => setShowInvoiceModal(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-forest-800 hover:bg-forest-900 text-gold-300 font-semibold text-xs rounded-xl shadow transition-colors"
+              >
+                <FileText className="w-4 h-4" />
+                <span>GST Tax Invoice</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Dynamic Global Horizontal Order Tracking Stepper */}
+        <div className="mb-6">
+          <OrderTrackingStepper order={order} />
         </div>
 
         {/* Items List */}
@@ -110,14 +149,19 @@ export const OrderDetailPage: React.FC = () => {
         <div className="p-6 bg-white rounded-2xl border border-cream-300 shadow-sm space-y-2 text-sm">
           <div className="flex items-center gap-2 font-serif text-base font-bold text-charcoal-950">
             <MapPin className="w-4 h-4 text-gold-600" />
-            <span>Shipping Address</span>
+            <span>Delivery Destination</span>
           </div>
           <p className="font-semibold text-charcoal-900">{order.shippingAddress.fullName}</p>
           <p className="text-charcoal-600">{order.shippingAddress.street}</p>
           <p className="text-charcoal-600">
             {order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.pincode}
           </p>
-          <p className="text-charcoal-600">Mobile: {order.shippingAddress.mobile}</p>
+          <p className="text-charcoal-600">Contact: {order.shippingAddress.mobile}</p>
+          {order.notes && (
+            <p className="text-xs text-charcoal-500 pt-1 border-t border-cream-200 mt-2">
+              <strong>Order Instructions:</strong> {order.notes}
+            </p>
+          )}
         </div>
       </div>
 

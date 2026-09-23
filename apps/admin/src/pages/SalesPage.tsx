@@ -3,7 +3,9 @@ import { useTeaNestStore, formatCurrency, formatDate } from '@tea-nest/shared';
 
 export const SalesPage: React.FC = () => {
   const { state } = useTeaNestStore();
-  const sales = state.sales;
+  const sales = [...state.sales].sort(
+    (a, b) => new Date(b.createdAt || b.saleDate).getTime() - new Date(a.createdAt || a.saleDate).getTime()
+  );
 
   const totalSales = sales.reduce((sum, s) => sum + s.grandTotal, 0);
   const totalTaxable = sales.reduce((sum, s) => sum + s.taxableAmount, 0);

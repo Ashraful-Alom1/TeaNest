@@ -14,8 +14,8 @@ Copy `.env.example` to `.env` in the root:
 # Application Settings
 VITE_APP_NAME="Tea Nest"
 VITE_BRAND_TAGLINE="Born in Assam, Loved Everywhere"
-VITE_BUSINESS_PHONE="+919854012345"
-VITE_BUSINESS_WHATSAPP="+919854012345"
+VITE_BUSINESS_PHONE="+91 88223 08551"
+VITE_BUSINESS_WHATSAPP="918822308551"
 
 # Firebase Client Configuration
 VITE_FIREBASE_API_KEY="your-api-key"

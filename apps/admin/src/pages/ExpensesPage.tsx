@@ -14,7 +14,9 @@ export const ExpensesPage: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState('Bank Transfer');
   const [expenseDate, setExpenseDate] = useState(new Date().toISOString().substring(0, 10));
 
-  const expenses = state.expenses;
+  const expenses = [...state.expenses].sort(
+    (a, b) => new Date(b.createdAt || b.expenseDate).getTime() - new Date(a.createdAt || a.expenseDate).getTime()
+  );
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
 
   const handleCreate = (e: React.FormEvent) => {

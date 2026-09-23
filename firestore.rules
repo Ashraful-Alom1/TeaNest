@@ -3,157 +3,182 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // ==========================================
-    // Helper Functions & Role-Based Access Control
+    // Security Helper Functions
     // ==========================================
-    function isAuthenticated() {
+    function isSignedIn() {
       return request.auth != null;
     }
 
-    function isOwner(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
-    }
-
-    // SuperAdmin email bootstrap safeguard to prevent admin lockouts
-    function isSuperAdminEmail() {
-      return isAuthenticated() && (
-        request.auth.token.email == 'ramdhenudigisolution@gmail.com' ||
-        request.auth.token.email == 'admin@teanest.in' ||
-        request.auth.token.email == 'fortunateventures123@gmail.com'
-      );
-    }
-
     function isAdmin() {
-      return isAuthenticated() && (
-        isSuperAdminEmail() ||
-        (
-          exists(/databases/$(database)/documents/adminUsers/$(request.auth.uid)) &&
-          get(/databases/$(database)/documents/adminUsers/$(request.auth.uid)).data.isActive == true
-        )
-      );
+      return isSignedIn() && request.auth.token.admin == true;
     }
 
-    function isSuperAdmin() {
-      return isSuperAdminEmail() || (
-        isAdmin() &&
-        get(/databases/$(database)/documents/adminUsers/$(request.auth.uid)).data.role == 'SUPER_ADMIN'
-      );
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
     }
 
     // ==========================================
-    // Public & Storefront Collections
+    // Public & Catalog Collections
     // ==========================================
-
-    // Business Settings & Info: Public read, Admin write
-    match /businessSettings/{documentId} {
+    match /categories/{id} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Products: Public read for storefront catalog, Admin full control
-    match /products/{productId} {
-      allow read: if true;
+    match /products/{id} {
+      allow read: if resource.data.isActive == true || isAdmin();
       allow write: if isAdmin();
     }
 
-    // Categories: Public read, Admin full control
-    match /categories/{categoryId} {
-      allow read: if true;
+    match /products/{id}/variants/{variantId} {
+      allow read: if resource.data.isActive == true || isAdmin();
       allow write: if isAdmin();
     }
 
-    // ==========================================
-    // Customer & Checkout Management
-    // ==========================================
-
-    // Users / Customer Accounts
-    match /users/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
-      allow create: if isAuthenticated();
-      allow update: if isOwner(userId) || isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // Customers collection (Storefront & CRM profiles)
-    match /customers/{customerId} {
-      allow read: if isOwner(customerId) || isAdmin();
-      allow create: if true; // Allows guest & initial checkout customer profile
-      allow update: if isOwner(customerId) || isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // Customer Carts
-    match /carts/{userId} {
-      allow read, write: if isOwner(userId) || isAdmin();
-    }
-
-    // Orders:
-    // - Customers / guests can place orders
-    // - Customers can view their own orders; Admins can view all
-    // - Only Admins can edit or delete existing orders
-    match /orders/{orderId} {
-      allow read: if isAdmin() || (isAuthenticated() && resource.data.customerId == request.auth.uid);
-      allow create: if true;
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == 'approved' || isAdmin();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && request.resource.data.status == 'pending';
       allow update, delete: if isAdmin();
     }
 
-    // Invoices: Customers can view their own GST invoices, Admin full control
-    match /invoices/{invoiceId} {
-      allow read: if isAdmin() || (isAuthenticated() && resource.data.customerDetails.customerId == request.auth.uid);
+    match /postCategories/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /posts/{postId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /coupons/{code} {
+      allow read: if resource.data.isActive == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /serviceablePincodes/{pincode} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /shippingRates/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /gstRates/{hsnCode} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /settings/{key} {
+      allow read: if key == 'business' || isAdmin();
       allow write: if isAdmin();
     }
 
     // ==========================================
-    // ERP, Inventory & Admin Operations
+    // Customer Account & Subcollections
     // ==========================================
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow update: if (isOwner(uid) || isAdmin()) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'stats']));
+      allow create, delete: if false; // Created strictly by onUserCreate trigger
+    }
 
-    // Inventory Ledger
-    match /inventoryMovements/{movementId} {
+    match /users/{uid}/addresses/{addressId} {
+      allow read, write: if isOwner(uid) || isAdmin();
+    }
+
+    match /users/{uid}/cart/{variantId} {
+      allow read, write: if isOwner(uid) || isAdmin();
+    }
+
+    match /users/{uid}/wishlist/{productId} {
+      allow read, write: if isOwner(uid) || isAdmin();
+    }
+
+    // ==========================================
+    // Orders & Tracking (Server-only writes)
+    // ==========================================
+    match /orders/{orderId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow write: if false; // Cloud Functions transaction only
+    }
+
+    match /orders/{orderId}/timeline/{eventId} {
+      allow read: if isAdmin() || (isSignedIn() && get(/databases/$(database)/documents/orders/$(orderId)).data.userId == request.auth.uid);
+      allow write: if false; // Append-only by Cloud Functions
+    }
+
+    match /orders/{orderId}/notes/{noteId} {
       allow read, write: if isAdmin();
     }
 
-    // Low Stock Notifications
-    match /lowStockAlerts/{alertId} {
+    // ==========================================
+    // Invoices & Financial Documents (Server-only writes)
+    // ==========================================
+    match /invoices/{invoiceId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow write: if false;
+    }
+
+    match /creditNotes/{creditNoteId} {
       allow read, write: if isAdmin();
     }
 
-    // Suppliers & Tea Estates
-    match /suppliers/{supplierId} {
+    // ==========================================
+    // Customer Support & CRM
+    // ==========================================
+    match /returns/{id} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    match /tickets/{id} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.customerId == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.customerId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    match /tickets/{id}/messages/{msgId} {
+      allow read, create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    match /customerNotes/{id} {
       allow read, write: if isAdmin();
     }
 
-    // Purchase Orders & Inward Intake
-    match /purchases/{purchaseId} {
+    match /abandonedCarts/{id} {
       allow read, write: if isAdmin();
     }
 
-    // Sales Accounting Ledger
-    match /sales/{saleId} {
-      allow read, write: if isAdmin();
-    }
-
-    // Operating Expenses
-    match /expenses/{expenseId} {
-      allow read, write: if isAdmin();
-    }
-
-    // Admin Users & Staff RBAC
-    match /adminUsers/{userId} {
-      allow read: if isAuthenticated();
-      allow create, update, delete: if isSuperAdmin();
-    }
-
-    // Compliance Audit Logs: Append & read restricted to staff/admins
-    match /auditLogs/{logId} {
-      allow read, write: if isAdmin();
-    }
-
-    // Customer Relationship Management (CRM)
-    match /crmTimeline/{eventId} {
-      allow read, write: if isAdmin();
-    }
-
-    match /customerNotes/{noteId} {
-      allow read, write: if isAdmin();
-    }
+    // ==========================================
+    // ERP, Inventory, Purchasing & Admin
+    // ==========================================
+    match /suppliers/{id} { allow read, write: if isAdmin(); }
+    match /purchaseOrders/{id} { allow read, write: if isAdmin(); }
+    match /goodsReceipts/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /supplierBills/{id} { allow read, write: if isAdmin(); }
+    match /supplierPayments/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /purchaseReturns/{id} { allow read, write: if isAdmin(); }
+    match /expenses/{id} { allow read, write: if isAdmin(); }
+    match /expenseCategories/{id} { allow read, write: if isAdmin(); }
+    match /batches/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /stockMovements/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /alerts/{id} { allow read, update: if isAdmin(); allow write: if false; }
+    match /dailySummaries/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /monthlySummaries/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /auditLogs/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /shipments/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /shipmentsByAwb/{awb} { allow read, write: if false; }
+    match /shipmentEvents/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /payments/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /paymentWebhookEvents/{id} { allow read, write: if false; }
+    match /refunds/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /notifications/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /backupRuns/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /counters/{id} { allow read, write: if false; }
   }
 }

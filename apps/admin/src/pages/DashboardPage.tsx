@@ -7,7 +7,6 @@ import {
   AlertTriangle,
   DollarSign,
   ArrowUpRight,
-  ExternalLink,
 } from 'lucide-react';
 import {
   AreaChart,
@@ -62,6 +61,9 @@ export const DashboardPage: React.FC = () => {
   const shippedOrders = orders.filter((o) => o.status === 'SHIPPED');
   const deliveredOrders = orders.filter((o) => o.status === 'DELIVERED');
   const cancelledOrders = orders.filter((o) => o.status === 'CANCELLED');
+  const recentOrders = [...orders]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 8);
 
   // Dynamic 7-day sales trend computed strictly from valid completed transactions
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -82,7 +84,7 @@ export const DashboardPage: React.FC = () => {
 
   // Orders by Status chart - strictly real counts across full lifecycle
   const orderStatusData = [
-    { name: 'Pending WhatsApp', value: pendingOrders.length, color: '#f59e0b' },
+    { name: 'New Order', value: pendingOrders.length, color: '#f59e0b' },
     { name: 'Confirmed', value: confirmedOrders.length, color: '#22c55e' },
     { name: 'Processing', value: processingOrders.length, color: '#3b82f6' },
     { name: 'Shipped', value: shippedOrders.length, color: '#8b5cf6' },
@@ -91,7 +93,7 @@ export const DashboardPage: React.FC = () => {
   ].filter((item) => item.value > 0);
 
   const pipelineBreakdown = [
-    { name: 'Pending WhatsApp', value: pendingOrders.length, color: '#f59e0b' },
+    { name: 'New Order', value: pendingOrders.length, color: '#f59e0b' },
     { name: 'Confirmed', value: confirmedOrders.length, color: '#22c55e' },
     { name: 'Processing', value: processingOrders.length, color: '#3b82f6' },
     { name: 'Shipped', value: shippedOrders.length, color: '#8b5cf6' },
@@ -324,25 +326,27 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Recent Orders Table */}
+      {/* Recent Orders Overview */}
       <div className="bg-admin-surface border border-admin-border rounded-2xl overflow-hidden shadow-sm">
-        <div className="p-6 border-b border-admin-border flex items-center justify-between">
+        <div className="p-5 border-b border-admin-border flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-gray-100">Recent Customer Orders</h3>
-            <p className="text-xs text-admin-muted">Live queue from WhatsApp and web checkout</p>
+            <h3 className="font-serif text-base font-bold text-gray-100">Live Order Pipeline</h3>
+            <p className="text-xs text-admin-muted mt-0.5">
+              Recent real-time order inquiries from authentic tea lovers.
+            </p>
           </div>
           <Link
             to="/orders"
-            className="text-xs font-bold text-admin-gold hover:underline flex items-center gap-1"
+            className="text-xs text-admin-gold hover:underline font-semibold flex items-center gap-1"
           >
-            <span>View All</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            <span>View All Orders</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        {orders.length === 0 ? (
-          <div className="p-8 text-center text-xs text-admin-muted">
-            No customer orders received yet. Place an order via the customer storefront to see real-time updates!
+        {recentOrders.length === 0 ? (
+          <div className="p-12 text-center text-xs text-admin-muted">
+            No live customer orders registered yet.
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -351,68 +355,79 @@ export const DashboardPage: React.FC = () => {
                 <tr>
                   <th className="p-4">Order ID</th>
                   <th className="p-4">Customer</th>
-                  <th className="p-4">Products</th>
+                  <th className="p-4">Items</th>
                   <th className="p-4">Total</th>
                   <th className="p-4">Status</th>
-                  <th className="p-4">Date</th>
-                  <th className="p-4 text-right">Actions</th>
+                  <th className="p-4">Placed Date</th>
+                  <th className="p-4 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-admin-border">
-                {orders.slice(0, 5).map((order) => (
-                  <tr key={order.id} className="hover:bg-admin-card/50 transition-colors">
-                    <td className="p-4 font-bold text-admin-gold">{order.orderNumber}</td>
-                    <td className="p-4">
-                      <p className="font-semibold text-gray-200">{order.customerName}</p>
-                      <p className="text-[11px] text-admin-muted">{order.customerMobile}</p>
-                    </td>
-                    <td className="p-4 text-gray-300">
-                      {order.items.map((i) => `${i.name} (${i.quantity}x)`).join(', ')}
-                    </td>
-                    <td className="p-4 font-bold text-gray-100">
-                      {formatCurrency(order.grandTotal, false)}
-                    </td>
-                    <td className="p-4">
-                      <span
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                          order.status === 'CONFIRMED'
-                            ? 'bg-green-950 text-green-400 border border-green-800'
-                            : order.status === 'WHATSAPP_PENDING' || order.status === 'PENDING_CONFIRMATION'
-                            ? 'bg-amber-950 text-amber-400 border border-amber-800'
-                            : order.status === 'PROCESSING'
-                            ? 'bg-blue-950 text-blue-400 border border-blue-800'
-                            : order.status === 'SHIPPED'
-                            ? 'bg-purple-950 text-purple-400 border border-purple-800'
-                            : order.status === 'DELIVERED'
-                            ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
-                            : 'bg-rose-950 text-rose-400 border border-rose-800'
-                        }`}
-                      >
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="p-4 text-admin-muted">{formatDate(order.createdAt)}</td>
-                    <td className="p-4 text-right">
-                      {order.status === 'WHATSAPP_PENDING' || order.status === 'PENDING_CONFIRMATION' ? (
-                        <button
-                          onClick={() => handleQuickConfirm(order.id)}
-                          className="px-3 py-1.5 bg-green-700 hover:bg-green-600 text-white rounded-lg text-xs font-bold transition-colors shadow"
-                        >
-                          Confirm & Invoice
-                        </button>
-                      ) : order.status === 'CANCELLED' ? (
-                        <span className="text-rose-400 font-semibold text-xs">Void / Cancelled</span>
-                      ) : (
-                        <Link
-                          to={`/invoices`}
-                          className="text-xs text-admin-gold hover:underline font-semibold"
-                        >
-                          Invoice Generated
+                {recentOrders.map((order) => {
+                  const isNewOrder =
+                    order.status === 'WHATSAPP_PENDING' ||
+                    order.status === 'PENDING_CONFIRMATION' ||
+                    order.status === 'DRAFT';
+
+                  return (
+                    <tr key={order.id} className="hover:bg-admin-card/50 transition-colors">
+                      <td className="p-4 font-bold text-admin-gold">
+                        <Link to="/orders" className="hover:underline">
+                          {order.orderNumber}
                         </Link>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="p-4">
+                        <p className="font-semibold text-gray-200">{order.customerName}</p>
+                        <p className="text-[11px] text-admin-muted">{order.customerMobile}</p>
+                      </td>
+                      <td className="p-4 text-gray-300">
+                        {order.items.map((i) => `${i.name} (${i.quantity}x)`).join(', ')}
+                      </td>
+                      <td className="p-4 font-bold text-gray-100">
+                        {formatCurrency(order.grandTotal, false)}
+                      </td>
+                      <td className="p-4">
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                            order.status === 'CONFIRMED'
+                              ? 'bg-green-950 text-green-400 border border-green-800'
+                              : isNewOrder
+                              ? 'bg-amber-950 text-amber-400 border border-amber-800'
+                              : order.status === 'PROCESSING'
+                              ? 'bg-blue-950 text-blue-400 border border-blue-800'
+                              : order.status === 'SHIPPED'
+                              ? 'bg-purple-950 text-purple-400 border border-purple-800'
+                              : order.status === 'DELIVERED'
+                              ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                              : 'bg-rose-950 text-rose-400 border border-rose-800'
+                          }`}
+                        >
+                          {isNewOrder ? 'NEW ORDER' : order.status}
+                        </span>
+                      </td>
+                      <td className="p-4 text-admin-muted">{formatDate(order.createdAt)}</td>
+                      <td className="p-4 text-right">
+                        {isNewOrder ? (
+                          <button
+                            onClick={() => handleQuickConfirm(order.id)}
+                            className="px-3 py-1.5 bg-green-700 hover:bg-green-600 text-white rounded-lg text-xs font-bold transition-colors shadow"
+                          >
+                            Confirm & Invoice
+                          </button>
+                        ) : order.status === 'CANCELLED' ? (
+                          <span className="text-rose-400 font-semibold text-xs">Void / Cancelled</span>
+                        ) : (
+                          <Link
+                            to={`/invoices`}
+                            className="text-xs text-admin-gold hover:underline font-semibold"
+                          >
+                            Invoice Generated
+                          </Link>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

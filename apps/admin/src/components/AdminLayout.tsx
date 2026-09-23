@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -24,8 +24,10 @@ import {
   LogOut,
   UserCheck,
   ExternalLink,
+  Cloud,
+  CloudOff,
 } from 'lucide-react';
-import { useTeaNestStore } from '@tea-nest/shared';
+import { useTeaNestStore, firestoreSync, SyncStatus } from '@tea-nest/shared';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -37,6 +39,13 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>(firestoreSync.getSyncStatus());
+
+  useEffect(() => {
+    return firestoreSync.onSyncStatusChange((status) => {
+      setSyncStatus(status);
+    });
+  }, []);
 
   const admin = state.currentAdmin;
   if (!admin || !admin.isActive) {
@@ -124,7 +133,11 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         {/* Storefront Link & Admin Pill */}
         <div className="p-4 border-t border-admin-border space-y-3">
           <a
-            href="/"
+            href={
+              typeof window !== 'undefined' && window.location.port === '5174'
+                ? `${window.location.protocol}//${window.location.hostname}:5173/`
+                : '/'
+            }
             target="_blank"
             rel="noreferrer"
             className="flex items-center justify-between px-3 py-2 rounded-lg bg-admin-card hover:bg-admin-border text-xs text-admin-gold transition-colors"
@@ -220,6 +233,48 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
               )}
             </Link>
+
+            {/* Cloud Sync Status Indicator */}
+            <div
+              className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-medium transition-colors ${
+                syncStatus.status === 'synced'
+                  ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-300'
+                  : syncStatus.status === 'syncing'
+                  ? 'bg-amber-950/40 border-amber-800/60 text-amber-300'
+                  : syncStatus.status === 'error'
+                  ? 'bg-rose-950/50 border-rose-800/60 text-rose-300'
+                  : 'bg-gray-800/40 border-gray-700 text-gray-400'
+              }`}
+              title={
+                syncStatus.lastError
+                  ? `Cloud Sync Issue: ${syncStatus.lastError}`
+                  : syncStatus.lastSyncedAt
+                  ? `Cloud Synced at ${new Date(syncStatus.lastSyncedAt).toLocaleTimeString()}`
+                  : 'Cloud Database Status'
+              }
+            >
+              {syncStatus.status === 'synced' ? (
+                <>
+                  <Cloud className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Cloud Synced</span>
+                </>
+              ) : syncStatus.status === 'syncing' ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  <span>Syncing...</span>
+                </>
+              ) : syncStatus.status === 'error' ? (
+                <>
+                  <CloudOff className="w-3.5 h-3.5 text-rose-400" />
+                  <span>Local Mode (Cloud Error)</span>
+                </>
+              ) : (
+                <>
+                  <CloudOff className="w-3.5 h-3.5 text-gray-400" />
+                  <span>Offline Storage</span>
+                </>
+              )}
+            </div>
 
             {/* Role Badge */}
             {admin && (
