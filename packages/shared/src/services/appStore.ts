@@ -20,7 +20,6 @@ import { OrderService } from './orderService';
 import {
   SEED_ADMIN,
   SEED_BUSINESS_SETTINGS,
-  SEED_PRODUCT,
   SEED_PRODUCTS,
   SEED_BLOGS,
 } from '../seedData';
